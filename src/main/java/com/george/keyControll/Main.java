@@ -1,16 +1,18 @@
 package com.george.keyControll;
 
 import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import com.george.keyControll.model.Person;
 import com.george.keyControll.view.AddEditPersonView;
 import com.george.keyControll.view.MainView;
-import com.george.keyControll.view.PersonsView;
+import com.george.keyControll.view.SettingsView;
 import jssc.SerialPort;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
 
 import javax.swing.*;
 import java.awt.event.WindowEvent;
+import java.util.prefs.Preferences;
 
 public class Main {
 
@@ -25,7 +27,7 @@ public class Main {
             connect(port);
         }
 
-        FlatDarkLaf.setup();
+        setUpWithPreferences();
         startMainView();
     }
 
@@ -61,6 +63,16 @@ public class Main {
 
     }
 
+    private static void setUpWithPreferences() {
+        Preferences appPreferences = Preferences.userRoot().node("appPreferences");
+        String theme = appPreferences.get("theme", "Светлая");
+
+        if (theme.equals("Темная"))
+            FlatDarkLaf.setup();
+        if (theme.equals("Светлая"))
+            FlatLightLaf.setup();
+    }
+
     public static void startMainView() {
         JFrame mainFrame = new JFrame("Главная");
         mainFrame.setContentPane(new MainView().mainPanel);
@@ -72,7 +84,7 @@ public class Main {
 
     public static void startPersonsView() {
         personsFrame = new JFrame("Пользователи");
-        personsFrame.setContentPane(new PersonsView().personsPanel);
+        personsFrame.setContentPane(new SettingsView().personsPanel);
         personsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         personsFrame.setSize(600, 400);
         personsFrame.setLocationRelativeTo(null);

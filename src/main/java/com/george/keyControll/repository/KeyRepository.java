@@ -1,7 +1,6 @@
 package com.george.keyControll.repository;
 
 import com.george.keyControll.model.Key;
-import com.george.keyControll.model.Person;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -88,7 +87,36 @@ public class KeyRepository {
         ArrayList<Key> keys = new ArrayList<>();
 
         statement = connection.createStatement();
-        String query = "SELECT id, uid, personName, personImage, cabinet, dateTake, timeTake, timeReturn FROM keys";
+        String query = "SELECT id, uid, personName, personImage, cabinet, dateTake, timeTake, timeReturn FROM keys;";
+        ResultSet resultSet = statement.executeQuery(query);
+
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String uid = resultSet.getString("uid");
+            String namePerson = resultSet.getString("personName");
+            String personImage = resultSet.getString("personImage");
+            String cabinet = resultSet.getString("cabinet");
+            String dateTake = resultSet.getString("dateTake");
+            String timeTake = resultSet.getString("timeTake");
+            String timeReturn = resultSet.getString("timeReturn");
+
+            Key key = new Key(uid, namePerson, personImage, cabinet,
+                    dateTake, timeTake, timeReturn);
+            key.setId(id);
+
+            keys.add(key);
+        }
+
+        return keys;
+    }
+
+    public ArrayList<Key> getKeysByDate(String dateTaken) throws SQLException {
+        ArrayList<Key> keys = new ArrayList<>();
+
+        statement = connection.createStatement();
+        String query = "SELECT id, uid, personName, personImage, cabinet, dateTake, timeTake, timeReturn FROM keys WHERE dateTake = '" + dateTaken + "' ;";
+        System.out.println(query);
+
         ResultSet resultSet = statement.executeQuery(query);
 
         while (resultSet.next()) {

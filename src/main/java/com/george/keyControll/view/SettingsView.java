@@ -6,21 +6,37 @@ import com.george.keyControll.viewModel.PersonViewModel;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.prefs.Preferences;
 
-public class PersonsView {
+public class SettingsView {
     public JPanel personsPanel;
     private JList<String> personList;
     private JButton addPersonButton;
+    private JComboBox<String> themeComboBox;
+    private JButton saveSettingsButton;
 
-    private final PersonViewModel personViewModel = new PersonViewModel();
+    private final Preferences appPreferences;
 
-    public PersonsView() {
+    public SettingsView() {
+        appPreferences = Preferences.userRoot().node("appPreferences");
+        setPreferences();
+
+        saveSettingsButton.addActionListener(e -> {
+            String theme = (String) themeComboBox.getSelectedItem();
+            appPreferences.put("theme", theme);
+
+            JOptionPane.showMessageDialog(personsPanel,
+                    "Внимание! Изменения вступят в силу только после перезапуска.",
+                    "Внимание!",
+                    JOptionPane.WARNING_MESSAGE);
+        });
 
         addPersonButton.addActionListener(e -> {
             Main.startAddEditPersonView(null);
             Main.closePersonsView();
         });
 
+        PersonViewModel personViewModel = new PersonViewModel();
         ArrayList<Person> allPersons = personViewModel.getAllPersons();
 
         ArrayList<String> usersNames = new ArrayList<>();
@@ -48,6 +64,11 @@ public class PersonsView {
             }
         });
 
+    }
+
+    private void setPreferences() {
+        String theme = appPreferences.get("theme", "Светлая");
+        themeComboBox.setSelectedItem(theme);
     }
 
 }
