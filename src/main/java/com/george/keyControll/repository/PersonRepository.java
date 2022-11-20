@@ -27,7 +27,7 @@ public class PersonRepository {
                 .formatted(person.getUid(),
                         person.getName(),
                         person.getImage(),
-                        person.getImage()
+                        person.getCabinet()
                 );
 
         System.out.println(query);

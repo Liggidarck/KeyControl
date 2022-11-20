@@ -2,7 +2,9 @@ package com.george.keyControll.view;
 
 import com.george.keyControll.Main;
 import com.george.keyControll.model.Person;
+import com.george.keyControll.utils.TextValidator;
 import com.george.keyControll.viewModel.PersonViewModel;
+import org.w3c.dom.Text;
 
 import javax.swing.*;
 
@@ -16,12 +18,23 @@ public class AddEditPersonView {
     private JTextField imageTextField;
     private JButton scanUidButton;
 
+    private final TextValidator textValidator = new TextValidator();
+
     private final PersonViewModel personViewModel = new PersonViewModel();
 
     public AddEditPersonView(Person person) {
 
         saveButton.addActionListener(e -> {
             Person newPerson = getPerson();
+
+            if(newPerson == null) {
+                JOptionPane.showMessageDialog(addEditPersonPanel,
+                        "Поля не могут быть пустыми.",
+                        "Ошибка!",
+                        JOptionPane.ERROR_MESSAGE);
+
+                return;
+            }
 
             if (person == null)
                 createPerson(newPerson);
@@ -48,12 +61,18 @@ public class AddEditPersonView {
 
     }
 
+    private boolean validateFields(String uid, String name, String cabinet, String image) {
+        return textValidator.isEmptyField(uid) || textValidator.isEmptyField(name)
+                || textValidator.isEmptyField(cabinet) || textValidator.isEmptyField(image);
+    }
     private Person getPerson() {
-        // Todo: add check empty field
         String uid = uidTextField.getText();
         String namePerson = namePersonTextField.getText();
         String cabinet = cabinetTextField.getText();
         String imagePerson = imageTextField.getText();
+        if(validateFields(uid, namePerson, cabinet, imagePerson)) {
+            return null;
+        }
 
         return new Person(uid, namePerson, imagePerson, cabinet);
     }
