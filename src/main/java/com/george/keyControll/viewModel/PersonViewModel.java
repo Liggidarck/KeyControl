@@ -30,6 +30,14 @@ public class PersonViewModel {
         }
     }
 
+    public Person getPersonByUid(String uid) {
+        try {
+            return personRepository.getPersonByUid(uid);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void deletePerson(int id) {
         try {
             personRepository.deletePerson(id);

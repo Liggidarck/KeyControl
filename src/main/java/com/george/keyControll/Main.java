@@ -5,6 +5,9 @@ import com.george.keyControll.model.Person;
 import com.george.keyControll.view.AddEditPersonView;
 import com.george.keyControll.view.MainView;
 import com.george.keyControll.view.PersonsView;
+import jssc.SerialPort;
+import jssc.SerialPortException;
+import jssc.SerialPortList;
 
 import javax.swing.*;
 import java.awt.event.WindowEvent;
@@ -15,8 +18,47 @@ public class Main {
     private static JFrame addEditPersonsFrame;
 
     public static void main(String[] args) {
+
+        String[] portList = SerialPortList.getPortNames();
+        for (String port : portList) {
+            System.out.println(port);
+            connect(port);
+        }
+
         FlatDarkLaf.setup();
         startMainView();
+    }
+
+    private static void connect(String portName) {
+        SerialPort serialPort = new SerialPort(portName);
+
+        try {
+            serialPort.openPort();
+            serialPort.setParams(
+                    SerialPort.BAUDRATE_9600,
+                    SerialPort.DATABITS_8,
+                    SerialPort.STOPBITS_1,
+                    SerialPort.PARITY_NONE
+            );
+
+            serialPort.addEventListener(serialPortEvent -> {
+
+                if (serialPortEvent.isRXCHAR()) {
+                    try {
+                        String uid = serialPort.readString();
+                        System.out.println("uid:" + uid);
+                    } catch (SerialPortException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+            });
+
+
+        } catch (SerialPortException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public static void startMainView() {
