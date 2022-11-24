@@ -1,6 +1,5 @@
 package com.george.keyControll.repository;
 
-import com.george.keyControll.model.Key;
 import com.george.keyControll.model.Person;
 
 import java.sql.*;

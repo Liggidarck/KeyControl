@@ -4,9 +4,9 @@ import com.george.keyControll.Main;
 import com.george.keyControll.model.Person;
 import com.george.keyControll.utils.TextValidator;
 import com.george.keyControll.viewModel.PersonViewModel;
-import org.w3c.dom.Text;
 
 import javax.swing.*;
+import java.io.*;
 
 public class AddEditPersonView {
     public JPanel addEditPersonPanel;
@@ -17,10 +17,15 @@ public class AddEditPersonView {
     private JTextField cabinetTextField;
     private JTextField imageTextField;
     private JButton scanUidButton;
+    private JButton chooseImageButton;
 
     private final TextValidator textValidator = new TextValidator();
 
     private final PersonViewModel personViewModel = new PersonViewModel();
+
+    private String filePath = null;
+
+    private byte[] personImage = null;
 
     public AddEditPersonView(Person person) {
 
@@ -48,6 +53,32 @@ public class AddEditPersonView {
             Main.startPersonsView();
         });
 
+        chooseImageButton.addActionListener(e -> {
+            JFileChooser chooser = new JFileChooser();
+            chooser.showOpenDialog(null);
+            File file = chooser.getSelectedFile();
+            filePath = file.getAbsolutePath();
+
+            try {
+                File image = new File(filePath);
+                FileInputStream fileInputStream = new FileInputStream(image);
+
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                byte[] buf = new byte[1024];
+
+                for(int readNum; (readNum = fileInputStream.read(buf)) != -1;) {
+                    byteArrayOutputStream.write(buf, 0, readNum);
+                }
+
+                personImage = byteArrayOutputStream.toByteArray();
+
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+
+        });
+
+
         if (person == null) {
             return;
         }
@@ -58,7 +89,6 @@ public class AddEditPersonView {
             int id = person.getId();
             personViewModel.deletePerson(id);
         });
-
     }
 
     private boolean validateFields(String uid, String name, String cabinet, String image) {
