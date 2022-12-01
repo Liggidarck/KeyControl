@@ -1,4 +1,4 @@
-package com.george.keyControll.view;
+package com.george.keyControll.view.settings;
 
 import com.george.keyControll.Main;
 import com.george.keyControll.model.Person;
@@ -14,8 +14,6 @@ public class AddEditPersonView {
     private JButton deleteButton;
     private JTextField uidTextField;
     private JTextField namePersonTextField;
-    private JTextField cabinetTextField;
-    private JTextField imageTextField;
     private JButton scanUidButton;
 
     private final TextValidator textValidator = new TextValidator();
@@ -45,7 +43,7 @@ public class AddEditPersonView {
             }
 
             Main.closeAddEditPersons();
-            Main.startPersonsView();
+            Main.startSettingsView();
         });
 
         if (person == null) {
@@ -61,27 +59,22 @@ public class AddEditPersonView {
 
     }
 
-    private boolean validateFields(String uid, String name, String cabinet, String image) {
-        return textValidator.isEmptyField(uid) || textValidator.isEmptyField(name)
-                || textValidator.isEmptyField(cabinet) || textValidator.isEmptyField(image);
+    private boolean validateFields(String uid, String name) {
+        return textValidator.isEmptyField(uid) || textValidator.isEmptyField(name);
     }
     private Person getPerson() {
         String uid = uidTextField.getText();
         String namePerson = namePersonTextField.getText();
-        String cabinet = cabinetTextField.getText();
-        String imagePerson = imageTextField.getText();
-        if(validateFields(uid, namePerson, cabinet, imagePerson)) {
+        if(validateFields(uid, namePerson)) {
             return null;
         }
 
-        return new Person(uid, namePerson, imagePerson, cabinet);
+        return new Person(uid, namePerson);
     }
 
     private void setInfoPerson(Person person) {
         uidTextField.setText(person.getUid());
         namePersonTextField.setText(person.getName());
-        cabinetTextField.setText(person.getCabinet());
-        imageTextField.setText(person.getImage());
     }
 
     private void createPerson(Person person) {
