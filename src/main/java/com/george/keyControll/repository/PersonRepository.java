@@ -1,6 +1,5 @@
 package com.george.keyControll.repository;
 
-import com.george.keyControll.model.Key;
 import com.george.keyControll.model.Person;
 
 import java.sql.*;
@@ -22,12 +21,10 @@ public class PersonRepository {
     }
 
     public void createPerson(Person person) throws SQLException {
-        String query = ("INSERT INTO persons (uid, personName, personImage, cabinet) " +
-                "VALUES ('%s','%s','%s', '%s');")
+        String query = ("INSERT INTO persons (uid, name) " +
+                "VALUES ('%s','%s');")
                 .formatted(person.getUid(),
-                        person.getName(),
-                        person.getImage(),
-                        person.getCabinet()
+                        person.getName()
                 );
 
         System.out.println(query);
@@ -41,11 +38,9 @@ public class PersonRepository {
 
     public void updatePerson(Person person) throws SQLException {
         int id = person.getId();
-        String query = ("UPDATE persons SET uid = '%s', personName = '%s', personImage = '%s', cabinet = '%s' WHERE id = " + id + ";")
+        String query = ("UPDATE persons SET uid = '%s', name = '%s' WHERE id = " + id + ";")
                 .formatted(person.getUid(),
-                        person.getName(),
-                        person.getImage(),
-                        person.getCabinet()
+                        person.getName()
                 );
         System.out.println(query);
 
@@ -58,17 +53,15 @@ public class PersonRepository {
     public Person getPersonByUid(String uid) throws SQLException {
         Person person = null;
 
-        String query = "SELECT id, uid, personName, personImage, cabinet FROM persons WHERE uid = " + uid;
+        String query = "SELECT id, uid, name FROM persons WHERE uid = " + uid;
         statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(query);
 
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
-            String namePerson = resultSet.getString("personName");
-            String personImage = resultSet.getString("personImage");
-            String cabinet = resultSet.getString("cabinet");
+            String namePerson = resultSet.getString("name");
 
-            person = new Person(uid, namePerson, personImage, cabinet);
+            person = new Person(uid, namePerson);
             person.setId(id);
         }
 
@@ -85,17 +78,15 @@ public class PersonRepository {
         ArrayList<Person> persons = new ArrayList<>();
 
         statement = connection.createStatement();
-        String query = "SELECT id, uid, personName, personImage, cabinet FROM persons";
+        String query = "SELECT id, uid, name FROM persons";
         ResultSet resultSet = statement.executeQuery(query);
 
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
             String uid = resultSet.getString("uid");
-            String namePerson = resultSet.getString("personName");
-            String personImage = resultSet.getString("personImage");
-            String cabinet = resultSet.getString("cabinet");
+            String namePerson = resultSet.getString("name");
 
-            Person person = new Person(uid, namePerson, personImage, cabinet);
+            Person person = new Person(uid, namePerson);
             person.setId(id);
 
             persons.add(person);

@@ -2,13 +2,12 @@ package com.george.keyControll;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.george.keyControll.model.Key;
 import com.george.keyControll.model.Person;
-import com.george.keyControll.view.AddEditPersonView;
+import com.george.keyControll.view.settings.AddEditKeyView;
+import com.george.keyControll.view.settings.AddEditPersonView;
 import com.george.keyControll.view.MainView;
-import com.george.keyControll.view.SettingsView;
-import jssc.SerialPort;
-import jssc.SerialPortException;
-import jssc.SerialPortList;
+import com.george.keyControll.view.settings.SettingsView;
 
 import javax.swing.*;
 import java.awt.event.WindowEvent;
@@ -16,52 +15,16 @@ import java.util.prefs.Preferences;
 
 public class Main {
 
-    private static JFrame personsFrame;
+    private static JFrame settingsFrame;
     private static JFrame addEditPersonsFrame;
 
+    private static JFrame addEditKeysFrame;
+
     public static void main(String[] args) {
-
-        String[] portList = SerialPortList.getPortNames();
-        for (String port : portList) {
-            System.out.println(port);
-            connect(port);
-        }
-
         setUpWithPreferences();
         startMainView();
     }
 
-    private static void connect(String portName) {
-        SerialPort serialPort = new SerialPort(portName);
-
-        try {
-            serialPort.openPort();
-            serialPort.setParams(
-                    SerialPort.BAUDRATE_9600,
-                    SerialPort.DATABITS_8,
-                    SerialPort.STOPBITS_1,
-                    SerialPort.PARITY_NONE
-            );
-
-            serialPort.addEventListener(serialPortEvent -> {
-
-                if (serialPortEvent.isRXCHAR()) {
-                    try {
-                        String uid = serialPort.readString();
-                        System.out.println("uid:" + uid);
-                    } catch (SerialPortException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
-            });
-
-
-        } catch (SerialPortException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
 
     private static void setUpWithPreferences() {
         Preferences appPreferences = Preferences.userRoot().node("appPreferences");
@@ -82,13 +45,13 @@ public class Main {
         mainFrame.setVisible(true);
     }
 
-    public static void startPersonsView() {
-        personsFrame = new JFrame("Пользователи");
-        personsFrame.setContentPane(new SettingsView().personsPanel);
-        personsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        personsFrame.setSize(600, 400);
-        personsFrame.setLocationRelativeTo(null);
-        personsFrame.setVisible(true);
+    public static void startSettingsView() {
+        settingsFrame = new JFrame("Настроки");
+        settingsFrame.setContentPane(new SettingsView().personsPanel);
+        settingsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        settingsFrame.setSize(600, 400);
+        settingsFrame.setLocationRelativeTo(null);
+        settingsFrame.setVisible(true);
     }
 
     public static void startAddEditPersonView(Person person) {
@@ -100,12 +63,26 @@ public class Main {
         addEditPersonsFrame.setVisible(true);
     }
 
-    public static void closePersonsView() {
-        personsFrame.dispatchEvent(new WindowEvent(personsFrame, WindowEvent.WINDOW_CLOSING));
+    public static void startAddEditKeyView(Key key) {
+        addEditKeysFrame = new JFrame("Добавить ключ");
+        addEditKeysFrame.setContentPane(new AddEditKeyView(key).addEditPanel);
+        addEditKeysFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        addEditKeysFrame.setSize(600, 400);
+        addEditKeysFrame.setLocationRelativeTo(null);
+        addEditKeysFrame.setVisible(true);
+    }
+
+    public static void closeSettingsView() {
+        settingsFrame.dispatchEvent(new WindowEvent(settingsFrame, WindowEvent.WINDOW_CLOSING));
     }
 
     public static void closeAddEditPersons() {
         addEditPersonsFrame.dispatchEvent(new WindowEvent(addEditPersonsFrame, WindowEvent.WINDOW_CLOSING));
+    }
+
+    public static void closeAddEditKey() {
+        addEditKeysFrame.dispatchEvent(new WindowEvent(addEditKeysFrame, WindowEvent.WINDOW_CLOSING));
+
     }
 
 }

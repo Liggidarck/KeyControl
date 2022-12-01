@@ -1,10 +1,9 @@
-package com.george.keyControll.view;
+package com.george.keyControll.view.settings;
 
 import com.george.keyControll.Main;
 import com.george.keyControll.model.Person;
 import com.george.keyControll.utils.TextValidator;
 import com.george.keyControll.viewModel.PersonViewModel;
-import org.w3c.dom.Text;
 
 import javax.swing.*;
 
@@ -14,15 +13,45 @@ public class AddEditPersonView {
     private JButton deleteButton;
     private JTextField uidTextField;
     private JTextField namePersonTextField;
-    private JTextField cabinetTextField;
-    private JTextField imageTextField;
     private JButton scanUidButton;
 
     private final TextValidator textValidator = new TextValidator();
 
     private final PersonViewModel personViewModel = new PersonViewModel();
 
+    private boolean scan;
+
     public AddEditPersonView(Person person) {
+
+//        String port = "";
+//        for (String s : NRSerialPort.getAvailableSerialPorts()) {
+//            System.out.println("Available port: " + s);
+//            port = s;
+//        }
+//
+//        int baudRate = 9600;
+//        NRSerialPort serial = new NRSerialPort(port, baudRate);
+//        serial.connect();
+
+        scanUidButton.addActionListener(e -> {
+//            scan = true;
+//            DataInputStream ins = new DataInputStream(serial.getInputStream());
+//            try {
+//                while (scan) {
+//                    if (ins.available() > 0) {
+//                        String uid = ins.readLine();
+//                        if(uid.length() != 0) {
+//                            scan = false;
+//                            uidTextField.setText(uid);
+//                            System.out.println(scan);
+//                        }
+//
+//                    }
+//                }
+//            } catch (Exception ex) {
+//                ex.printStackTrace();
+//            }
+        });
 
         saveButton.addActionListener(e -> {
             Person newPerson = getPerson();
@@ -45,7 +74,7 @@ public class AddEditPersonView {
             }
 
             Main.closeAddEditPersons();
-            Main.startPersonsView();
+            Main.startSettingsView();
         });
 
         if (person == null) {
@@ -61,27 +90,22 @@ public class AddEditPersonView {
 
     }
 
-    private boolean validateFields(String uid, String name, String cabinet, String image) {
-        return textValidator.isEmptyField(uid) || textValidator.isEmptyField(name)
-                || textValidator.isEmptyField(cabinet) || textValidator.isEmptyField(image);
+    private boolean validateFields(String uid, String name) {
+        return textValidator.isEmptyField(uid) || textValidator.isEmptyField(name);
     }
     private Person getPerson() {
         String uid = uidTextField.getText();
         String namePerson = namePersonTextField.getText();
-        String cabinet = cabinetTextField.getText();
-        String imagePerson = imageTextField.getText();
-        if(validateFields(uid, namePerson, cabinet, imagePerson)) {
+        if(validateFields(uid, namePerson)) {
             return null;
         }
 
-        return new Person(uid, namePerson, imagePerson, cabinet);
+        return new Person(uid, namePerson);
     }
 
     private void setInfoPerson(Person person) {
         uidTextField.setText(person.getUid());
         namePersonTextField.setText(person.getName());
-        cabinetTextField.setText(person.getCabinet());
-        imageTextField.setText(person.getImage());
     }
 
     private void createPerson(Person person) {

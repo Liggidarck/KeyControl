@@ -13,95 +13,85 @@ public class KeyRepository {
     public KeyRepository() {
         try {
             Class.forName("org.sqlite.JDBC");
-            String PERSON_DATABASE_PATH = "jdbc:sqlite:src/main/resources/database/key.db";
+            String PERSON_DATABASE_PATH = "jdbc:sqlite:src/main/resources/database/keys.db";
             connection = DriverManager.getConnection(PERSON_DATABASE_PATH);
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
     }
 
+
     public void createKey(Key key) throws SQLException {
-        String query = ("INSERT INTO keys (uid, personName, personImage, cabinet, dateTake, timeTake, timeReturn) " +
-                "VALUES ('%s','%s','%s', '%s', '%s', '%s', '%s');")
+
+        String query = ("INSERT INTO keys (uid, number, available) " +
+                "VALUES ('%s','%s', '%s');")
                 .formatted(key.getUid(),
-                        key.getPersonName(),
-                        key.getPersonImage(),
-                        key.getCabinet(),
-                        key.getDateTake(),
-                        key.getTimeTake(),
-                        key.getTimeReturn()
+                        key.getNumber(),
+                        key.getAvailable()
                 );
 
         System.out.println(query);
 
         statement = connection.createStatement();
         statement.executeUpdate(query);
+        statement.close();
+        connection.close();
+    }
+
+    public void updateKey(Key key) throws SQLException {
+        int id = key.getId();
+        String query = ("UPDATE keys SET uid = '%s', number = '%s', available = '%s' WHERE id = " + id + ";")
+                .formatted(key.getUid(),
+                        key.getNumber(),
+                        key.getAvailable()
+                );
+        System.out.println(query);
+
+        statement = connection.createStatement();
+        statement.execute(query);
+        statement.close();
+        connection.close();
     }
 
 
+    public void deleteKey(int id) throws SQLException {
+        String query = "DELETE FROM keys WHERE id = " + id;
+        statement = connection.createStatement();
+        statement.executeUpdate(query);
+    }
     public Key getKeyByUid(String uid) throws SQLException {
         Key key = null;
 
-        String query = "SELECT id, uid, personName, personImage, cabinet," +
-                " dateTake, timeTake, timeReturn FROM keys WHERE uid = " + uid;
+        String query = "SELECT id, uid, number, available FROM keys WHERE uid = " + uid;
         statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(query);
 
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
-            String namePerson = resultSet.getString("personName");
-            String personImage = resultSet.getString("personImage");
-            String cabinet = resultSet.getString("cabinet");
-            String dateTake = resultSet.getString("dateTake");
-            String timeTake = resultSet.getString("timeTake");
-            String timeReturn = resultSet.getString("timeReturn");
+            String number = resultSet.getString("number");
+            String available = resultSet.getString("available");
 
-            key = new Key(uid, namePerson, personImage, cabinet,
-                    dateTake, timeTake, timeReturn);
+            key = new Key(uid, number, available);
             key.setId(id);
         }
 
         return key;
     }
 
-
-    public void updateKey(Key key) throws SQLException {
-        int id = key.getId();
-        String query = ("UPDATE keys SET uid = '%s', personName = '%s', personImage = '%s', cabinet = '%s'," +
-                " dateTake = '%s', timeTake = '%s', timeReturn = '%s' WHERE id = " + id + ";")
-                .formatted(key.getUid(),
-                        key.getPersonName(),
-                        key.getPersonImage(),
-                        key.getCabinet(),
-                        key.getDateTake(),
-                        key.getTimeTake(),
-                        key.getTimeReturn()
-                );
-        System.out.println(query);
-
-        statement = connection.createStatement();
-        statement.execute(query);
-    }
-
     public ArrayList<Key> getAllKeys() throws SQLException {
         ArrayList<Key> keys = new ArrayList<>();
 
         statement = connection.createStatement();
-        String query = "SELECT id, uid, personName, personImage, cabinet, dateTake, timeTake, timeReturn FROM keys;";
+        String query = "SELECT id, uid, number, available FROM keys";
         ResultSet resultSet = statement.executeQuery(query);
 
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
             String uid = resultSet.getString("uid");
-            String namePerson = resultSet.getString("personName");
-            String personImage = resultSet.getString("personImage");
-            String cabinet = resultSet.getString("cabinet");
-            String dateTake = resultSet.getString("dateTake");
-            String timeTake = resultSet.getString("timeTake");
-            String timeReturn = resultSet.getString("timeReturn");
+            String number = resultSet.getString("number");
+            String available = resultSet.getString("available");
 
-            Key key = new Key(uid, namePerson, personImage, cabinet,
-                    dateTake, timeTake, timeReturn);
+            Key key = new Key(uid, number, available);
             key.setId(id);
 
             keys.add(key);
@@ -110,39 +100,7 @@ public class KeyRepository {
         return keys;
     }
 
-    public ArrayList<Key> getKeysByDate(String dateTaken) throws SQLException {
-        ArrayList<Key> keys = new ArrayList<>();
 
-        statement = connection.createStatement();
-        String query = "SELECT id, uid, personName, personImage, cabinet, dateTake, timeTake, timeReturn FROM keys WHERE dateTake = '" + dateTaken + "' ;";
-        System.out.println(query);
-
-        ResultSet resultSet = statement.executeQuery(query);
-
-        while (resultSet.next()) {
-            int id = resultSet.getInt("id");
-            String uid = resultSet.getString("uid");
-            String namePerson = resultSet.getString("personName");
-            String personImage = resultSet.getString("personImage");
-            String cabinet = resultSet.getString("cabinet");
-            String dateTake = resultSet.getString("dateTake");
-            String timeTake = resultSet.getString("timeTake");
-            String timeReturn = resultSet.getString("timeReturn");
-
-            Key key = new Key(uid, namePerson, personImage, cabinet,
-                    dateTake, timeTake, timeReturn);
-            key.setId(id);
-
-            keys.add(key);
-        }
-
-        return keys;
-    }
-
-    public void closeConnection() throws SQLException {
-        statement.close();
-        connection.close();
-    }
-
+    //
 
 }

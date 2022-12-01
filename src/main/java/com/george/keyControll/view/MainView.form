@@ -65,15 +65,15 @@
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Сканировать (delete)"/>
+              <text value="Сканировать"/>
             </properties>
           </component>
-          <component id="79ef7" class="javax.swing.JButton" binding="updateDateButton">
+          <component id="79ef7" class="javax.swing.JButton" binding="keyAvailableButton">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Обновить дату"/>
+              <text value="Доступность ключей"/>
             </properties>
           </component>
           <vspacer id="59974">

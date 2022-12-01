@@ -6,19 +6,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class KeyTableModel implements TableModel {
+public class InfoTableModel implements TableModel {
 
     private final Set<TableModelListener> listeners = new HashSet<>();
 
-    private final List<Key> keys;
+    private final List<Info> infos;
 
-    public KeyTableModel(List<Key> keys) {
-        this.keys = keys;
+    public InfoTableModel(List<Info> infos) {
+        this.infos = infos;
     }
 
     @Override
     public int getRowCount() {
-        return keys.size();
+        return infos.size();
     }
 
     @Override
@@ -50,13 +50,13 @@ public class KeyTableModel implements TableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Key key = keys.get(rowIndex);
+        Info info = infos.get(rowIndex);
         return switch (columnIndex) {
-            case 0 -> key.getPersonName();
-            case 1 -> key.getCabinet();
-            case 2 -> key.getDateTake();
-            case 3 -> key.getTimeTake();
-            case 4 -> key.getTimeReturn();
+            case 0 -> info.getPersonName();
+            case 1 -> info.getCabinet();
+            case 2 -> info.getDateTake();
+            case 3 -> info.getTimeTake();
+            case 4 -> info.getTimeReturn();
             default -> "";
         };
     }

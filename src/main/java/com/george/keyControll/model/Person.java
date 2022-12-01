@@ -13,14 +13,9 @@ public class Person {
 
     private String name;
 
-    private String image;
 
-    private String cabinet;
-
-    public Person(String uid, String name, String image, String cabinet) {
+    public Person(String uid, String name) {
         this.uid = uid;
         this.name = name;
-        this.image = image;
-        this.cabinet = cabinet;
     }
 }
