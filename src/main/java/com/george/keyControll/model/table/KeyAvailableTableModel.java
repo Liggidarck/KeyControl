@@ -1,4 +1,6 @@
-package com.george.keyControll.model;
+package com.george.keyControll.model.table;
+
+import com.george.keyControll.model.Key;
 
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
@@ -6,34 +8,30 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class InfoTableModel implements TableModel {
+public class KeyAvailableTableModel implements TableModel {
 
     private final Set<TableModelListener> listeners = new HashSet<>();
 
-    private final List<Info> infos;
+    private final List<Key> keys;
 
-    public InfoTableModel(List<Info> infos) {
-        this.infos = infos;
+    public KeyAvailableTableModel(List<Key> keys) {
+        this.keys = keys;
     }
-
     @Override
     public int getRowCount() {
-        return infos.size();
+        return keys.size();
     }
 
     @Override
     public int getColumnCount() {
-        return 5;
+        return 2;
     }
 
     @Override
     public String getColumnName(int columnIndex) {
         return switch (columnIndex) {
-            case 0 -> "Фамалия Имя Отчество";
-            case 1 -> "Кабинет";
-            case 2 -> "Дата взятия";
-            case 3 -> "Время взятия";
-            case 4 -> "Время возврата";
+            case 0 -> "Кабинет";
+            case 1 -> "Доступность";
             default -> "";
         };
     }
@@ -50,13 +48,10 @@ public class InfoTableModel implements TableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Info info = infos.get(rowIndex);
+        Key key = keys.get(rowIndex);
         return switch (columnIndex) {
-            case 0 -> info.getPersonName();
-            case 1 -> info.getCabinet();
-            case 2 -> info.getDateTake();
-            case 3 -> info.getTimeTake();
-            case 4 -> info.getTimeReturn();
+            case 0 -> key.getNumber();
+            case 1 -> key.getAvailable();
             default -> "";
         };
     }
@@ -67,14 +62,12 @@ public class InfoTableModel implements TableModel {
     }
 
     @Override
-    public void addTableModelListener(TableModelListener listener) {
-        this.listeners.add(listener);
+    public void addTableModelListener(TableModelListener l) {
+        this.listeners.add(l);
     }
 
     @Override
-    public void removeTableModelListener(TableModelListener listener) {
-        listeners.remove(listener);
+    public void removeTableModelListener(TableModelListener l) {
+        this.listeners.remove(l);
     }
-
-
 }

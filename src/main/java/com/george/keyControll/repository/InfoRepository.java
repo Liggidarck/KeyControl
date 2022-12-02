@@ -1,7 +1,6 @@
 package com.george.keyControll.repository;
 
 import com.george.keyControll.model.Info;
-import com.george.keyControll.model.Key;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -56,11 +55,11 @@ public class InfoRepository {
         statement.execute(query);
     }
 
-    public Info getInfoByPersonUid(String uid) throws SQLException {
+    public Info getInfoByPersonUidAndDate(String uid, String date) throws SQLException {
         Info info = null;
 
         statement = connection.createStatement();
-        String query = "SELECT id, personName, personUid, cabinet, cabinetUid, dateTake, timeTake, timeReturn FROM info WHERE personUid = '" + uid + "' ;";
+        String query = "SELECT id, personName, personUid, cabinet, cabinetUid, dateTake, timeTake, timeReturn FROM info WHERE personUid = '" + uid + "' AND dateTake = '" + date +"' ;";
         ResultSet resultSet = statement.executeQuery(query);
 
         while (resultSet.next()) {
@@ -80,11 +79,11 @@ public class InfoRepository {
         return info;
     }
 
-    public Info getInfoByKeyUid(String uid) throws SQLException {
+    public Info getInfoByKeyUidAndDate(String uid, String date) throws SQLException {
         Info info = null;
 
         statement = connection.createStatement();
-        String query = "SELECT id, personName, personUid, cabinet, cabinetUid, dateTake, timeTake, timeReturn FROM info WHERE cabinetUid = '" + uid + "' ;";
+        String query = "SELECT id, personName, personUid, cabinet, cabinetUid, dateTake, timeTake, timeReturn FROM info WHERE cabinetUid = '" + uid + "' AND dateTake = '" + date + "'; ";
         ResultSet resultSet = statement.executeQuery(query);
 
         while (resultSet.next()) {

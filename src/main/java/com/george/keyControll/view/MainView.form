@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.george.keyControll.view.MainView">
   <grid id="27dc6" binding="mainPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
     <constraints>
-      <xy x="20" y="20" width="739" height="607"/>
+      <xy x="20" y="20" width="985" height="563"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -106,7 +106,10 @@
             <children>
               <component id="9e52f" class="javax.swing.JTable" binding="keysTable">
                 <constraints/>
-                <properties/>
+                <properties>
+                  <fillsViewportHeight value="false"/>
+                  <toolTipText value=""/>
+                </properties>
               </component>
             </children>
           </scrollpane>

@@ -21,17 +21,17 @@ public class InfoViewModel {
         }
     }
 
-    public Info getInfoByPersonUid(String uid) {
+    public Info getInfoByPersonUid(String uid, String date) {
         try {
-            return infoRepository.getInfoByPersonUid(uid);
+            return infoRepository.getInfoByPersonUidAndDate(uid, date);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public Info getInfoByKeyUid(String uid) {
+    public Info getInfoByKeyUidAndDate(String uid, String date) {
         try {
-            return infoRepository.getInfoByKeyUid(uid);
+            return infoRepository.getInfoByKeyUidAndDate(uid, date);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

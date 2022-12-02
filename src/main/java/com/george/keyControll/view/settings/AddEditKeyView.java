@@ -36,9 +36,7 @@ public class AddEditKeyView {
             if (key == null) {
                 keyViewModel.createKey(newKey);
             } else {
-                int id = key.getId();
-                newKey.setId(id);
-                keyViewModel.updateKey(newKey);
+                keyViewModel.updateKey(newKey, key.getId());
             }
 
             Main.startSettingsView();

@@ -4,6 +4,7 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.george.keyControll.model.Key;
 import com.george.keyControll.model.Person;
+import com.george.keyControll.view.KeyAvailableView;
 import com.george.keyControll.view.settings.AddEditKeyView;
 import com.george.keyControll.view.settings.AddEditPersonView;
 import com.george.keyControll.view.MainView;
@@ -17,8 +18,8 @@ public class Main {
 
     private static JFrame settingsFrame;
     private static JFrame addEditPersonsFrame;
-
     private static JFrame addEditKeysFrame;
+    private static JFrame keyAvailableFrame;
 
     public static void main(String[] args) {
         setUpWithPreferences();
@@ -70,6 +71,15 @@ public class Main {
         addEditKeysFrame.setSize(600, 400);
         addEditKeysFrame.setLocationRelativeTo(null);
         addEditKeysFrame.setVisible(true);
+    }
+
+    public static void startKeyAvailableView() {
+        keyAvailableFrame = new JFrame("Доступность");
+        keyAvailableFrame.setContentPane(new KeyAvailableView().keyAvailablePanel);
+        keyAvailableFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        keyAvailableFrame.setSize(600, 400);
+        keyAvailableFrame.setLocationRelativeTo(null);
+        keyAvailableFrame.setVisible(true);
     }
 
     public static void closeSettingsView() {

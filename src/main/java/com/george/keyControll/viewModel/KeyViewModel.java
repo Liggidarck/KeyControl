@@ -22,9 +22,9 @@ public class KeyViewModel {
         }
     }
 
-    public void updateKey(Key key) {
+    public void updateKey(Key key, int id) {
         try {
-            keyRepository.updateKey(key);
+            keyRepository.updateKey(key, id);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
