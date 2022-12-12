@@ -33,8 +33,8 @@ public class InfoTableModel implements TableModel {
         return switch (columnIndex) {
             case 0 -> "Фамалия Имя Отчество";
             case 1 -> "Кабинет";
-            case 2 -> "Дата взятия";
-            case 3 -> "Время взятия";
+            case 2 -> "Дата";
+            case 3 -> "Время получения";
             case 4 -> "Время возврата";
             default -> "";
         };

@@ -19,7 +19,7 @@
             </constraints>
             <properties>
               <font size="26"/>
-              <text value="Person Name"/>
+              <text value=""/>
             </properties>
           </component>
           <component id="aabe3" class="javax.swing.JLabel" binding="cabinetPersonLabel">
@@ -28,7 +28,7 @@
             </constraints>
             <properties>
               <font size="26"/>
-              <text value="Cabinet"/>
+              <text value=""/>
             </properties>
           </component>
           <component id="e806e" class="javax.swing.JLabel" binding="welcomeLabel">
@@ -54,26 +54,18 @@
           </component>
         </children>
       </grid>
-      <grid id="cbb8" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-        <margin top="10" left="10" bottom="10" right="10"/>
+      <grid id="cbb8" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="10" left="0" bottom="10" right="10"/>
         <constraints border-constraint="East"/>
         <properties/>
         <border type="none"/>
         <children>
           <component id="fffc6" class="javax.swing.JButton" binding="scanCardButton">
             <constraints>
-              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Сканировать"/>
-            </properties>
-          </component>
-          <component id="79ef7" class="javax.swing.JButton" binding="keyAvailableButton">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Доступность ключей"/>
             </properties>
           </component>
           <vspacer id="59974">
@@ -83,7 +75,7 @@
           </vspacer>
           <component id="7ea50" class="javax.swing.JButton" binding="settingsButton">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Настройки"/>
@@ -91,7 +83,7 @@
           </component>
         </children>
       </grid>
-      <grid id="86d59" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="86d59" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="10" left="10" bottom="10" right="10"/>
         <constraints border-constraint="Center"/>
         <properties/>
@@ -104,7 +96,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="9e52f" class="javax.swing.JTable" binding="keysTable">
+              <component id="9e52f" class="javax.swing.JTable" binding="keysTableView">
                 <constraints/>
                 <properties>
                   <fillsViewportHeight value="false"/>
@@ -144,6 +136,37 @@
                 </constraints>
                 <properties>
                   <text value="Применить"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="b9b30" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="79ef7" class="javax.swing.JButton" binding="keyAvailableButton">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Доступность ключей"/>
+                </properties>
+              </component>
+              <hspacer id="44f7">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+              </hspacer>
+              <component id="49880" class="javax.swing.JButton" binding="exportDataButton">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Экспорт таблицы"/>
                 </properties>
               </component>
             </children>

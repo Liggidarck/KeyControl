@@ -40,7 +40,8 @@ public class InfoRepository {
     }
 
     public void updateInfo(Info info, int id) throws SQLException {
-        String query = ("UPDATE info SET personName = '%s', personUid = '%s', cabinet = '%s', cabinetUid = '%s', dateTake = '%s', timeTake = '%s', timeReturn = '%s' WHERE id = " + id + ";")
+        String query = ("UPDATE info SET personName = '%s', personUid = '%s', cabinet = '%s'," +
+                " cabinetUid = '%s', dateTake = '%s', timeTake = '%s', timeReturn = '%s' WHERE id = " + id + ";")
                 .formatted(info.getPersonName(),
                         info.getPersonUid(),
                         info.getCabinet(),
@@ -59,7 +60,9 @@ public class InfoRepository {
         Info info = null;
 
         statement = connection.createStatement();
-        String query = "SELECT id, personName, personUid, cabinet, cabinetUid, dateTake, timeTake, timeReturn FROM info WHERE personUid = '" + uid + "' AND dateTake = '" + date +"' ;";
+        String query = ("SELECT id, personName, personUid, cabinet, cabinetUid, dateTake, " +
+                "timeTake, timeReturn FROM info WHERE personUid = '%s' AND dateTake = '%s' ;")
+                .formatted(uid, date);
         ResultSet resultSet = statement.executeQuery(query);
 
         while (resultSet.next()) {
@@ -83,7 +86,9 @@ public class InfoRepository {
         Info info = null;
 
         statement = connection.createStatement();
-        String query = "SELECT id, personName, personUid, cabinet, cabinetUid, dateTake, timeTake, timeReturn FROM info WHERE cabinetUid = '" + uid + "' AND dateTake = '" + date + "'; ";
+        String query = ("SELECT id, personName, personUid, cabinet, cabinetUid, dateTake," +
+                " timeTake, timeReturn FROM info WHERE cabinetUid = '%s' AND dateTake = '%s'; ")
+                .formatted(uid, date);
         ResultSet resultSet = statement.executeQuery(query);
 
         while (resultSet.next()) {
@@ -107,7 +112,9 @@ public class InfoRepository {
         ArrayList<Info> infoArrayList = new ArrayList<>();
 
         statement = connection.createStatement();
-        String query = "SELECT id, personName, personUid, cabinet, cabinetUid, dateTake, timeTake, timeReturn FROM info WHERE dateTake = '" + today + "' ;";
+        String query = ("SELECT id, personName, personUid, cabinet, cabinetUid, " +
+                "dateTake, timeTake, timeReturn FROM info WHERE dateTake = '%s' ;")
+                .formatted(today);
         ResultSet resultSet = statement.executeQuery(query);
 
         while (resultSet.next()) {

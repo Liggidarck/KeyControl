@@ -4,9 +4,12 @@ import com.george.keyControll.Main;
 import com.george.keyControll.model.Person;
 import com.george.keyControll.utils.TextValidator;
 import com.george.keyControll.viewModel.PersonViewModel;
+import gnu.io.NRSerialPort;
 import org.w3c.dom.Text;
 
 import javax.swing.*;
+import java.io.DataInputStream;
+import java.io.IOException;
 
 public class AddEditPersonView {
     public JPanel addEditPersonPanel;
@@ -20,7 +23,41 @@ public class AddEditPersonView {
 
     private final PersonViewModel personViewModel = new PersonViewModel();
 
+    private boolean scan;
+
     public AddEditPersonView(Person person) {
+
+        String port = "";
+        for (String s : NRSerialPort.getAvailableSerialPorts()) {
+            System.out.println("Available port: " + s);
+            port = s;
+        }
+
+        int baudRate = 9600;
+        NRSerialPort serial = new NRSerialPort(port, baudRate);
+        serial.connect();
+
+        scanUidButton.addActionListener(e -> {
+            DataInputStream ins = new DataInputStream(serial.getInputStream());
+            scan = true;
+
+            String cardUid;
+
+            try {
+                while (scan) {
+                    if (ins.available() > 0) {
+                        cardUid = ins.readLine();
+                        if(cardUid.length() != 0) {
+                            scan = false;
+                            System.out.println("CardUid: " + cardUid);
+                            uidTextField.setText(cardUid);
+                        }
+                    }
+                }
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
 
         saveButton.addActionListener(e -> {
             Person newPerson = getPerson();

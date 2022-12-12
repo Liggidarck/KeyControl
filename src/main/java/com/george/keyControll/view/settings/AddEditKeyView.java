@@ -4,8 +4,11 @@ import com.george.keyControll.Main;
 import com.george.keyControll.model.Key;
 import com.george.keyControll.utils.TextValidator;
 import com.george.keyControll.viewModel.KeyViewModel;
+import gnu.io.NRSerialPort;
 
 import javax.swing.*;
+import java.io.DataInputStream;
+import java.io.IOException;
 
 public class AddEditKeyView {
     private JTextField uidTextField;
@@ -19,7 +22,19 @@ public class AddEditKeyView {
     private final TextValidator textValidator = new TextValidator();
     private final KeyViewModel keyViewModel = new KeyViewModel();
 
+    private boolean scan;
+
     public AddEditKeyView(Key key) {
+
+        String port = "";
+        for (String s : NRSerialPort.getAvailableSerialPorts()) {
+            System.out.println("Available port: " + s);
+            port = s;
+        }
+
+        int baudRate = 9600;
+        NRSerialPort serial = new NRSerialPort(port, baudRate);
+        serial.connect();
 
         saveButton.addActionListener(e -> {
             Key newKey = getKey();
@@ -41,6 +56,28 @@ public class AddEditKeyView {
 
             Main.startSettingsView();
             Main.closeAddEditKey();
+        });
+
+        scanButton.addActionListener(e -> {
+            DataInputStream ins = new DataInputStream(serial.getInputStream());
+            scan = true;
+
+            String cardUid;
+
+            try {
+                while (scan) {
+                    if (ins.available() > 0) {
+                        cardUid = ins.readLine();
+                        if(cardUid.length() != 0) {
+                            scan = false;
+                            System.out.println("CardUid: " + cardUid);
+                            uidTextField.setText(cardUid);
+                        }
+                    }
+                }
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         });
 
         if (key == null) {

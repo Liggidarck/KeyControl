@@ -34,6 +34,9 @@ public class SettingsView {
                     "Внимание! Изменения вступят в силу только после перезапуска.",
                     "Внимание!",
                     JOptionPane.WARNING_MESSAGE);
+
+            Main.closeSettingsView();
+            Main.startMainView();
         });
 
         addPersonButton.addActionListener(e -> {
@@ -60,7 +63,6 @@ public class SettingsView {
         DefaultListModel<String> keyListModel = new DefaultListModel<>();
         keyListModel.addAll(nameKeys);
         keyList.setModel(keyListModel);
-
 
         keyList.addListSelectionListener(event -> {
             if (event.getValueIsAdjusting()) {

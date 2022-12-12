@@ -5,9 +5,9 @@ import com.formdev.flatlaf.FlatLightLaf;
 import com.george.keyControll.model.Key;
 import com.george.keyControll.model.Person;
 import com.george.keyControll.view.KeyAvailableView;
+import com.george.keyControll.view.MainView;
 import com.george.keyControll.view.settings.AddEditKeyView;
 import com.george.keyControll.view.settings.AddEditPersonView;
-import com.george.keyControll.view.MainView;
 import com.george.keyControll.view.settings.SettingsView;
 
 import javax.swing.*;
@@ -21,11 +21,12 @@ public class Main {
     private static JFrame addEditKeysFrame;
     private static JFrame keyAvailableFrame;
 
+    private static JFrame mainFrame;
+
     public static void main(String[] args) {
         setUpWithPreferences();
         startMainView();
     }
-
 
     private static void setUpWithPreferences() {
         Preferences appPreferences = Preferences.userRoot().node("appPreferences");
@@ -38,7 +39,7 @@ public class Main {
     }
 
     public static void startMainView() {
-        JFrame mainFrame = new JFrame("Главная");
+        mainFrame = new JFrame("Главная");
         mainFrame.setContentPane(new MainView().mainPanel);
         mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         mainFrame.setSize(1280, 720);
@@ -50,7 +51,7 @@ public class Main {
         settingsFrame = new JFrame("Настроки");
         settingsFrame.setContentPane(new SettingsView().personsPanel);
         settingsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        settingsFrame.setSize(600, 400);
+        settingsFrame.setSize(400, 500);
         settingsFrame.setLocationRelativeTo(null);
         settingsFrame.setVisible(true);
     }
@@ -92,6 +93,11 @@ public class Main {
 
     public static void closeAddEditKey() {
         addEditKeysFrame.dispatchEvent(new WindowEvent(addEditKeysFrame, WindowEvent.WINDOW_CLOSING));
+
+    }
+
+    public static void closeMainView() {
+        mainFrame.dispatchEvent(new WindowEvent(mainFrame, WindowEvent.WINDOW_CLOSING));
 
     }
 
