@@ -13,6 +13,8 @@ import com.george.keyControll.viewModel.PersonViewModel;
 import gnu.io.NRSerialPort;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -30,6 +32,7 @@ public class MainView {
     private JButton confirmDateButton;
     private JLabel welcomeLabel;
     private JButton exportDataButton;
+    private JButton editRowButton;
     private final TimeUtils timeUtils = new TimeUtils();
     private final TextValidator textValidator = new TextValidator();
     private final InfoViewModel infoViewModel = new InfoViewModel();
@@ -52,7 +55,8 @@ public class MainView {
 
         if (port.equals("")) {
             JOptionPane.showMessageDialog(mainPanel,
-                    "Сканер не найден. Попробуйте подключить сканер в другой разъем. \nФункционал программы будет ограничен.",
+                    "Сканер не найден. Попробуйте подключить сканер в другой разъем." +
+                            "\nФункционал программы будет ограничен.",
                     "Ошибка!",
                     JOptionPane.ERROR_MESSAGE);
         } else {
@@ -66,6 +70,26 @@ public class MainView {
         arrayListInfo = infoViewModel.getInfoByDate(currentDay);
         tableModel = new InfoTableModel(arrayListInfo);
         keysTableView.setModel(tableModel);
+
+
+        editRowButton.addActionListener(e -> {
+            System.out.println(keysTableView.getSelectedRow());
+            int row = keysTableView.getSelectedRow();
+
+            if(row == -1) {
+                JOptionPane.showMessageDialog(mainPanel,
+                        "Выберите строчку в таблице перед изменением.",
+                        "Внимание!",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            Info updateInfo = arrayListInfo.get(row);
+            int id = updateInfo.getId();
+
+            Main.closeMainView();
+            Main.startEditTableView(updateInfo, id);
+        });
 
         confirmDateButton.addActionListener(e -> {
             String date = dateTextField.getText();
@@ -87,7 +111,7 @@ public class MainView {
             Main.closeMainView();
         });
 
-        scanCardButton.addActionListener(e -> scanUidCard());
+        scanCardButton.addActionListener(e -> infoBehaviour("4194777190", "734588748"));
 
     }
 

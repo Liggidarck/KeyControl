@@ -2,8 +2,10 @@ package com.george.keyControll;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.george.keyControll.model.Info;
 import com.george.keyControll.model.Key;
 import com.george.keyControll.model.Person;
+import com.george.keyControll.view.EditTableView;
 import com.george.keyControll.view.KeyAvailableView;
 import com.george.keyControll.view.MainView;
 import com.george.keyControll.view.settings.AddEditKeyView;
@@ -20,7 +22,7 @@ public class Main {
     private static JFrame addEditPersonsFrame;
     private static JFrame addEditKeysFrame;
     private static JFrame keyAvailableFrame;
-
+    private static JFrame editTableFrame;
     private static JFrame mainFrame;
 
     public static void main(String[] args) {
@@ -54,6 +56,15 @@ public class Main {
         settingsFrame.setSize(400, 500);
         settingsFrame.setLocationRelativeTo(null);
         settingsFrame.setVisible(true);
+    }
+
+    public static void startEditTableView(Info info, int id) {
+        editTableFrame = new JFrame("Изменить строчку");
+        editTableFrame.setContentPane(new EditTableView(info, id).editTablePanel);
+        editTableFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        editTableFrame.setSize(400, 500);
+        editTableFrame.setLocationRelativeTo(null);
+        editTableFrame.setVisible(true);
     }
 
     public static void startAddEditPersonView(Person person) {
@@ -98,7 +109,9 @@ public class Main {
 
     public static void closeMainView() {
         mainFrame.dispatchEvent(new WindowEvent(mainFrame, WindowEvent.WINDOW_CLOSING));
-
+    }
+    public static void closeEditTable() {
+        editTableFrame.dispatchEvent(new WindowEvent(editTableFrame, WindowEvent.WINDOW_CLOSING));
     }
 
 }

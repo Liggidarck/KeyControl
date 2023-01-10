@@ -23,7 +23,10 @@ public class Info {
 
     private String timeReturn;
 
-    public Info(String personName, String personUid, String cabinet, String cabinetUid, String dateTake, String timeTake, String timeReturn) {
+    public Info(String personName, String personUid,
+                String cabinet, String cabinetUid,
+                String dateTake, String timeTake,
+                String timeReturn) {
         this.personName = personName;
         this.personUid = personUid;
         this.cabinet = cabinet;
