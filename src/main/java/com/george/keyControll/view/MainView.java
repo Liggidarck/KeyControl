@@ -46,14 +46,14 @@ public class MainView {
 
     public MainView() {
         int baudRate = 9600;
-        String port = "";
+        String port = "no connection";
 
         for (String ports : NRSerialPort.getAvailableSerialPorts()) {
             System.out.println("Available port: " + ports);
             port = ports;
         }
 
-        if (port.equals("")) {
+        if (port.equals("no connection")) {
             JOptionPane.showMessageDialog(mainPanel,
                     "Сканер не найден. Попробуйте подключить сканер в другой разъем." +
                             "\nФункционал программы будет ограничен.",
@@ -62,6 +62,7 @@ public class MainView {
         } else {
             serial = new NRSerialPort(port, baudRate);
             serial.connect();
+            scanCardButton.addActionListener(e -> scanUidCard());
         }
 
         currentDay = timeUtils.getDate();
@@ -71,7 +72,7 @@ public class MainView {
         tableModel = new InfoTableModel(arrayListInfo);
         keysTableView.setModel(tableModel);
 
-
+        String finalPort = port;
         editRowButton.addActionListener(e -> {
             System.out.println(keysTableView.getSelectedRow());
             int row = keysTableView.getSelectedRow();
@@ -87,6 +88,8 @@ public class MainView {
             Info updateInfo = arrayListInfo.get(row);
             int id = updateInfo.getId();
 
+            if(!finalPort.equals("no connection"))
+                serial.disconnect();
             Main.closeMainView();
             Main.startEditTableView(updateInfo, id);
         });
@@ -109,9 +112,9 @@ public class MainView {
         settingsButton.addActionListener(e -> {
             Main.startSettingsView();
             Main.closeMainView();
+            if(!finalPort.equals("no connection"))
+                serial.disconnect();
         });
-
-        scanCardButton.addActionListener(e -> infoBehaviour("4194777190", "734588748"));
 
     }
 

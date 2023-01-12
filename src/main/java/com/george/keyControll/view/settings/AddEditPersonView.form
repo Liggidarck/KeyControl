@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.george.keyControll.view.settings.AddEditPersonView">
   <grid id="27dc6" binding="addEditPersonPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
     <constraints>
-      <xy x="20" y="20" width="932" height="687"/>
+      <xy x="20" y="20" width="503" height="587"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -58,10 +58,9 @@
               <text value="Сканировать"/>
             </properties>
           </component>
-
         </children>
       </grid>
-      <grid id="b50d8" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="b50d8" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="10" left="0" bottom="10" right="10"/>
         <constraints border-constraint="South"/>
         <properties/>
@@ -69,7 +68,7 @@
         <children>
           <component id="1ae15" class="javax.swing.JButton" binding="saveButton">
             <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Сохранить"/>
@@ -88,6 +87,14 @@
               <enabled value="true"/>
               <text value="Удалить"/>
               <visible value="false"/>
+            </properties>
+          </component>
+          <component id="fa7ad" class="javax.swing.JButton" binding="backButton">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Вернутся назад"/>
             </properties>
           </component>
         </children>

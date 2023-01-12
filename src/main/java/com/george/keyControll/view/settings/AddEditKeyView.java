@@ -18,24 +18,56 @@ public class AddEditKeyView {
     private JButton saveButton;
     public JPanel addEditPanel;
     private JButton deleteButton;
+    private JButton backButton;
 
     private final TextValidator textValidator = new TextValidator();
     private final KeyViewModel keyViewModel = new KeyViewModel();
 
     private boolean scan;
+    private NRSerialPort serial;
 
     public AddEditKeyView(Key key) {
 
-        String port = "";
+        int baudRate = 9600;
+        String port = "no connection";
         for (String s : NRSerialPort.getAvailableSerialPorts()) {
             System.out.println("Available port: " + s);
             port = s;
         }
 
-        int baudRate = 9600;
-        NRSerialPort serial = new NRSerialPort(port, baudRate);
-        serial.connect();
+        if (port.equals("no connection")) {
+            JOptionPane.showMessageDialog(addEditPanel,
+                    "Сканер не найден. Попробуйте подключить сканер в другой разъем." +
+                            "\nФункционал программы будет ограничен.",
+                    "Ошибка!",
+                    JOptionPane.ERROR_MESSAGE);
+        } else {
+            serial = new NRSerialPort(port, baudRate);
+            serial.connect();
+            scanButton.addActionListener(e -> {
+                DataInputStream ins = new DataInputStream(serial.getInputStream());
+                scan = true;
 
+                String cardUid;
+
+                try {
+                    while (scan) {
+                        if (ins.available() > 0) {
+                            cardUid = ins.readLine();
+                            if(cardUid.length() != 0) {
+                                scan = false;
+                                System.out.println("CardUid: " + cardUid);
+                                uidTextField.setText(cardUid);
+                            }
+                        }
+                    }
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+        }
+
+        String finalPort = port;
         saveButton.addActionListener(e -> {
             Key newKey = getKey();
 
@@ -53,37 +85,14 @@ public class AddEditKeyView {
             } else {
                 keyViewModel.updateKey(newKey, key.getId());
             }
-
-            Main.startSettingsView();
-            Main.closeAddEditKey();
+            startSettings(finalPort);
         });
 
-        scanButton.addActionListener(e -> {
-            DataInputStream ins = new DataInputStream(serial.getInputStream());
-            scan = true;
-
-            String cardUid;
-
-            try {
-                while (scan) {
-                    if (ins.available() > 0) {
-                        cardUid = ins.readLine();
-                        if(cardUid.length() != 0) {
-                            scan = false;
-                            System.out.println("CardUid: " + cardUid);
-                            uidTextField.setText(cardUid);
-                        }
-                    }
-                }
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
+        backButton.addActionListener(e -> startSettings(finalPort));
 
         if (key == null) {
             return;
         }
-
 
         uidTextField.setText(key.getUid());
         numberTextField.setText(key.getNumber());
@@ -94,10 +103,16 @@ public class AddEditKeyView {
         deleteButton.addActionListener(e -> {
             int id = key.getId();
             keyViewModel.deleteKey(id);
-            Main.closeAddEditKey();
-            Main.startSettingsView();
+            startSettings(finalPort);
         });
 
+    }
+
+    private void startSettings(String finalPort) {
+        if(!finalPort.equals("no connection"))
+            serial.disconnect();
+        Main.startSettingsView();
+        Main.closeAddEditKey();
     }
 
     private boolean validateFields(String uid, String number, String available) {

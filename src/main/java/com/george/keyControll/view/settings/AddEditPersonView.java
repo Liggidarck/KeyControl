@@ -5,7 +5,6 @@ import com.george.keyControll.model.Person;
 import com.george.keyControll.utils.TextValidator;
 import com.george.keyControll.viewModel.PersonViewModel;
 import gnu.io.NRSerialPort;
-import org.w3c.dom.Text;
 
 import javax.swing.*;
 import java.io.DataInputStream;
@@ -18,6 +17,7 @@ public class AddEditPersonView {
     private JTextField uidTextField;
     private JTextField namePersonTextField;
     private JButton scanUidButton;
+    private JButton backButton;
 
     private final TextValidator textValidator = new TextValidator();
 
@@ -25,38 +25,53 @@ public class AddEditPersonView {
 
     private boolean scan;
 
+    private NRSerialPort serial;
+
     public AddEditPersonView(Person person) {
 
-        String port = "";
+        int baudRate = 9600;
+        String port = "no connection";
         for (String s : NRSerialPort.getAvailableSerialPorts()) {
             System.out.println("Available port: " + s);
             port = s;
         }
 
-        int baudRate = 9600;
-        NRSerialPort serial = new NRSerialPort(port, baudRate);
-        serial.connect();
+        if (port.equals("no connection")) {
+            JOptionPane.showMessageDialog(addEditPersonPanel,
+                    "Сканер не найден. Попробуйте подключить сканер в другой разъем." +
+                            "\nФункционал программы будет ограничен.",
+                    "Ошибка!",
+                    JOptionPane.ERROR_MESSAGE);
+        } else {
+            serial = new NRSerialPort(port, baudRate);
+            serial.connect();
+            scanUidButton.addActionListener(e -> {
+                DataInputStream ins = new DataInputStream(serial.getInputStream());
+                scan = true;
 
-        scanUidButton.addActionListener(e -> {
-            DataInputStream ins = new DataInputStream(serial.getInputStream());
-            scan = true;
+                String cardUid;
 
-            String cardUid;
-
-            try {
-                while (scan) {
-                    if (ins.available() > 0) {
-                        cardUid = ins.readLine();
-                        if(cardUid.length() != 0) {
-                            scan = false;
-                            System.out.println("CardUid: " + cardUid);
-                            uidTextField.setText(cardUid);
+                try {
+                    while (scan) {
+                        if (ins.available() > 0) {
+                            cardUid = ins.readLine();
+                            if(cardUid.length() != 0) {
+                                scan = false;
+                                System.out.println("CardUid: " + cardUid);
+                                uidTextField.setText(cardUid);
+                            }
                         }
                     }
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
                 }
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+            });
+        }
+
+        String finalPort = port;
+
+        backButton.addActionListener(e -> {
+            startSettings(finalPort);
         });
 
         saveButton.addActionListener(e -> {
@@ -79,8 +94,7 @@ public class AddEditPersonView {
                 updatePerson(newPerson);
             }
 
-            Main.closeAddEditPersons();
-            Main.startSettingsView();
+            startSettings(finalPort);
         });
 
         if (person == null) {
@@ -92,8 +106,16 @@ public class AddEditPersonView {
         deleteButton.addActionListener(e -> {
             int id = person.getId();
             personViewModel.deletePerson(id);
+            startSettings(finalPort);
         });
 
+    }
+
+    private void startSettings(String finalPort) {
+        if(!finalPort.equals("no connection"))
+            serial.disconnect();
+        Main.closeAddEditPersons();
+        Main.startSettingsView();
     }
 
     private boolean validateFields(String uid, String name) {

@@ -4,6 +4,7 @@ import com.george.keyControll.model.Key;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.prefs.Preferences;
 
 public class KeyRepository {
 
@@ -11,10 +12,15 @@ public class KeyRepository {
     private Statement statement;
 
     public KeyRepository() {
+
+        Preferences appPreferences = Preferences.userRoot().node("appPreferences");
+        String databasePath = appPreferences.get("databasePath", "C:/database/");
+
+        String KEY_DATABASE_PATH = "jdbc:sqlite:" + databasePath + "keys.db";
+
         try {
             Class.forName("org.sqlite.JDBC");
-            String PERSON_DATABASE_PATH = "jdbc:sqlite:src/main/resources/database/keys.db";
-            connection = DriverManager.getConnection(PERSON_DATABASE_PATH);
+            connection = DriverManager.getConnection(KEY_DATABASE_PATH);
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }

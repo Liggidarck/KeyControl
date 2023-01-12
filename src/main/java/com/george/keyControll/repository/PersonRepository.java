@@ -4,6 +4,7 @@ import com.george.keyControll.model.Person;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.prefs.Preferences;
 
 public class PersonRepository {
 
@@ -11,9 +12,13 @@ public class PersonRepository {
     private Statement statement;
 
     public PersonRepository() {
+        Preferences appPreferences = Preferences.userRoot().node("appPreferences");
+        String databasePath = appPreferences.get("databasePath", "C:/database/");
+
+        String PERSON_DATABASE_PATH = "jdbc:sqlite:" + databasePath + "persons.db";
+
         try {
             Class.forName("org.sqlite.JDBC");
-            String PERSON_DATABASE_PATH = "jdbc:sqlite:src/main/resources/database/persons.db";
             connection = DriverManager.getConnection(PERSON_DATABASE_PATH);
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();

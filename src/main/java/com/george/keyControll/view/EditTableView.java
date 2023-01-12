@@ -22,21 +22,30 @@ public class EditTableView {
     private JButton scanUidPersonButton;
     private JTextField uidKeyTextField;
     private JButton scanUidKeyButton;
-
-    private boolean scan;
+    private NRSerialPort serial;
 
     public EditTableView(Info info, int id) {
 
-        String port = "";
+        int baudRate = 9600;
+        String port = "no connection";
         for (String s : NRSerialPort.getAvailableSerialPorts()) {
             System.out.println("Available port: " + s);
             port = s;
         }
 
-        int baudRate = 9600;
-        NRSerialPort serial = new NRSerialPort(port, baudRate);
-        serial.connect();
+        if (port.equals("no connection")) {
+            JOptionPane.showMessageDialog(editTablePanel,
+                    "Сканер не найден. Попробуйте подключить сканер в другой разъем." +
+                            "\nФункционал программы будет ограничен.",
+                    "Ошибка!",
+                    JOptionPane.ERROR_MESSAGE);
+        } else {
+            serial = new NRSerialPort(port, baudRate);
+            serial.connect();
 
+            scanUidPersonButton.addActionListener(e -> scanCard(serial, uidPersonTextField));
+            scanUidKeyButton.addActionListener(e -> scanCard(serial, uidKeyTextField));
+        }
 
         nameTextField.setText(info.getPersonName());
         cabinetTextField.setText(info.getCabinet());
@@ -45,50 +54,6 @@ public class EditTableView {
         timeReturnTextField.setText(info.getTimeReturn());
         uidPersonTextField.setText(info.getPersonUid());
         uidKeyTextField.setText(info.getCabinetUid());
-
-        scanUidPersonButton.addActionListener(e -> {
-            DataInputStream ins = new DataInputStream(serial.getInputStream());
-            scan = true;
-
-            String cardUid;
-
-            try {
-                while (scan) {
-                    if (ins.available() > 0) {
-                        cardUid = ins.readLine();
-                        if(cardUid.length() != 0) {
-                            scan = false;
-                            System.out.println("CardUid: " + cardUid);
-                            uidPersonTextField.setText(cardUid);
-                        }
-                    }
-                }
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
-
-        scanUidPersonButton.addActionListener(e -> {
-            DataInputStream ins = new DataInputStream(serial.getInputStream());
-            scan = true;
-
-            String keyUid;
-
-            try {
-                while (scan) {
-                    if (ins.available() > 0) {
-                        keyUid = ins.readLine();
-                        if(keyUid.length() != 0) {
-                            scan = false;
-                            System.out.println("CardUid: " + keyUid);
-                            uidKeyTextField.setText(keyUid);
-                        }
-                    }
-                }
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
 
         saveButton.addActionListener(e -> {
             Info updateInfo = new Info(nameTextField.getText(),
@@ -100,15 +65,38 @@ public class EditTableView {
                     timeReturnTextField.getText());
             new InfoViewModel().updateInfo(updateInfo, id);
 
-            Main.closeEditTable();
-            Main.startMainView();
+            startMainView(serial);
         });
 
-        cancelButton.addActionListener(e -> {
-            Main.closeEditTable();
-            Main.startMainView();
-        });
+        cancelButton.addActionListener(e -> startMainView(serial));
+    }
 
+    private void scanCard(NRSerialPort serial, JTextField textField) {
+        DataInputStream ins = new DataInputStream(serial.getInputStream());
+        boolean scan = true;
+
+        String uid;
+
+        try {
+            while (scan) {
+                if (ins.available() > 0) {
+                    uid = ins.readLine();
+                    if (uid.length() != 0) {
+                        scan = false;
+                        System.out.println("Uid: " + uid);
+                        textField.setText(uid);
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private static void startMainView(NRSerialPort serial) {
+        serial.disconnect();
+        Main.closeEditTable();
+        Main.startMainView();
     }
 
 }

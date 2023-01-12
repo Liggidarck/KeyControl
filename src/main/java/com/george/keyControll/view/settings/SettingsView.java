@@ -19,6 +19,8 @@ public class SettingsView {
     private JButton saveSettingsButton;
     private JList<String> keyList;
     private JButton addKeyButton;
+    private JButton homeButton;
+    private JTextField pathDBTextField;
 
     private final Preferences appPreferences;
 
@@ -28,7 +30,9 @@ public class SettingsView {
 
         saveSettingsButton.addActionListener(e -> {
             String theme = (String) themeComboBox.getSelectedItem();
+            String path = pathDBTextField.getText();
             appPreferences.put("theme", theme);
+            appPreferences.put("databasePath", path);
 
             JOptionPane.showMessageDialog(personsPanel,
                     "Внимание! Изменения вступят в силу только после перезапуска.",
@@ -76,6 +80,11 @@ public class SettingsView {
             }
         });
 
+        homeButton.addActionListener(e -> {
+            Main.startMainView();
+            Main.closeSettingsView();
+        });
+
         initPersonList();
 
     }
@@ -113,6 +122,8 @@ public class SettingsView {
 
     private void setPreferences() {
         String theme = appPreferences.get("theme", "Светлая");
+        String databasePath = appPreferences.get("databasePath", "C:/database/");
         themeComboBox.setSelectedItem(theme);
+        pathDBTextField.setText(databasePath);
     }
 }

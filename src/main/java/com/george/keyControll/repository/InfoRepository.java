@@ -4,6 +4,7 @@ import com.george.keyControll.model.Info;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.prefs.Preferences;
 
 public class InfoRepository {
 
@@ -11,10 +12,14 @@ public class InfoRepository {
     private Statement statement;
 
     public InfoRepository() {
+        Preferences appPreferences = Preferences.userRoot().node("appPreferences");
+        String databasePath = appPreferences.get("databasePath", "C:/database/");
+
+        String INFO_DATABASE_PATH = "jdbc:sqlite:" + databasePath + "info.db";
+
         try {
             Class.forName("org.sqlite.JDBC");
-            String PERSON_DATABASE_PATH = "jdbc:sqlite:src/main/resources/database/info.db";
-            connection = DriverManager.getConnection(PERSON_DATABASE_PATH);
+            connection = DriverManager.getConnection(INFO_DATABASE_PATH);
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
