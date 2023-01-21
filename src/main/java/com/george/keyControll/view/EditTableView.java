@@ -2,7 +2,11 @@ package com.george.keyControll.view;
 
 import com.george.keyControll.Main;
 import com.george.keyControll.model.Info;
+import com.george.keyControll.model.Key;
+import com.george.keyControll.model.Person;
 import com.george.keyControll.viewModel.InfoViewModel;
+import com.george.keyControll.viewModel.KeyViewModel;
+import com.george.keyControll.viewModel.PersonViewModel;
 import gnu.io.NRSerialPort;
 
 import javax.swing.*;
@@ -24,6 +28,10 @@ public class EditTableView {
     private JButton scanUidKeyButton;
     private NRSerialPort serial;
 
+    private final PersonViewModel personViewModel = new PersonViewModel();
+    private final KeyViewModel keyViewModel = new KeyViewModel();
+
+
     public EditTableView(Info info, int id) {
 
         int baudRate = 9600;
@@ -43,8 +51,29 @@ public class EditTableView {
             serial = new NRSerialPort(port, baudRate);
             serial.connect();
 
-            scanUidPersonButton.addActionListener(e -> scanCard(serial, uidPersonTextField));
-            scanUidKeyButton.addActionListener(e -> scanCard(serial, uidKeyTextField));
+            scanUidPersonButton.addActionListener(e -> {
+                String uid = getUId(serial);
+
+                Person person = personViewModel.getPersonByUid(uid);
+                if(person == null) {
+                    return;
+                }
+
+                uidPersonTextField.setText(uid);
+                nameTextField.setText(person.getName());
+            });
+
+            scanUidKeyButton.addActionListener(e -> {
+                String uid = getUId(serial);
+
+                Key key = keyViewModel.getKeyByUid(uid);
+                if(key == null) {
+                    return;
+                }
+
+                uidKeyTextField.setText(uid);
+                cabinetTextField.setText(key.getNumber());
+            });
         }
 
         nameTextField.setText(info.getPersonName());
@@ -71,20 +100,17 @@ public class EditTableView {
         cancelButton.addActionListener(e -> startMainView(serial));
     }
 
-    private void scanCard(NRSerialPort serial, JTextField textField) {
+    private String getUId(NRSerialPort serial) {
         DataInputStream ins = new DataInputStream(serial.getInputStream());
-        boolean scan = true;
-
         String uid;
 
         try {
-            while (scan) {
+            while (true) {
                 if (ins.available() > 0) {
                     uid = ins.readLine();
                     if (uid.length() != 0) {
-                        scan = false;
                         System.out.println("Uid: " + uid);
-                        textField.setText(uid);
+                        return uid;
                     }
                 }
             }

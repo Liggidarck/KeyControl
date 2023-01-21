@@ -29,11 +29,7 @@ public class KeyRepository {
 
     public void createKey(Key key) throws SQLException {
         String query = ("INSERT INTO keys (uid, number, available) " +
-                "VALUES ('%s','%s', '%s');")
-                .formatted(key.getUid(),
-                        key.getNumber(),
-                        key.getAvailable()
-                );
+                "VALUES ('"+key.getUid()+"','"+key.getNumber()+"', '"+key.getAvailable()+"' );");
 
         System.out.println(query);
 
@@ -42,11 +38,8 @@ public class KeyRepository {
     }
 
     public void updateKey(Key key, int id) throws SQLException {
-        String query = ("UPDATE keys SET uid = '%s', number = '%s', available = '%s' WHERE id = " + id + ";")
-                .formatted(key.getUid(),
-                        key.getNumber(),
-                        key.getAvailable()
-                );
+        String query = ("UPDATE keys SET uid = '"+key.getUid()+"', number = '"+key.getNumber()+"', " +
+                "available = '"+key.getAvailable()+"' WHERE id = " + id + ";");
         System.out.println(query);
 
         statement = connection.createStatement();

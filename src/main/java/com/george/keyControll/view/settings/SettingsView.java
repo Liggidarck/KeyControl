@@ -65,7 +65,10 @@ public class SettingsView {
         }
 
         DefaultListModel<String> keyListModel = new DefaultListModel<>();
-        keyListModel.addAll(nameKeys);
+
+        for(String name: nameKeys) {
+            keyListModel.addElement(name);
+        }
         keyList.setModel(keyListModel);
 
         keyList.addListSelectionListener(event -> {
@@ -103,7 +106,11 @@ public class SettingsView {
         }
 
         DefaultListModel<String> personListModel = new DefaultListModel<>();
-        personListModel.addAll(usersNames);
+
+        for(String name: usersNames) {
+            personListModel.addElement(name);
+        }
+
         personList.setModel(personListModel);
 
         personList.addListSelectionListener(event -> {

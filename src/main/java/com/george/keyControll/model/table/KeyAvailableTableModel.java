@@ -17,6 +17,7 @@ public class KeyAvailableTableModel implements TableModel {
     public KeyAvailableTableModel(List<Key> keys) {
         this.keys = keys;
     }
+
     @Override
     public int getRowCount() {
         return keys.size();
@@ -29,11 +30,17 @@ public class KeyAvailableTableModel implements TableModel {
 
     @Override
     public String getColumnName(int columnIndex) {
-        return switch (columnIndex) {
-            case 0 -> "Кабинет";
-            case 1 -> "Доступность";
-            default -> "";
-        };
+        String column = null;
+
+        if (columnIndex == 0) {
+            column = "Кабинет";
+        }
+
+        if (columnIndex == 1) {
+            column = "Доступность";
+        }
+
+        return column;
     }
 
     @Override
@@ -49,11 +56,16 @@ public class KeyAvailableTableModel implements TableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         Key key = keys.get(rowIndex);
-        return switch (columnIndex) {
-            case 0 -> key.getNumber();
-            case 1 -> key.getAvailable();
-            default -> "";
-        };
+        String column = null;
+        if (columnIndex == 0) {
+            column = key.getNumber();
+        }
+
+        if (columnIndex == 1) {
+            column = key.getAvailable();
+        }
+
+        return column;
     }
 
     @Override

@@ -30,14 +30,25 @@ public class InfoTableModel implements TableModel {
 
     @Override
     public String getColumnName(int columnIndex) {
-        return switch (columnIndex) {
-            case 0 -> "Фамалия Имя Отчество";
-            case 1 -> "Кабинет";
-            case 2 -> "Дата";
-            case 3 -> "Время получения";
-            case 4 -> "Время возврата";
-            default -> "";
-        };
+        String column = null;
+
+        if (columnIndex == 0) {
+            column = "Фамалия Имя Отчество";
+        }
+        if (columnIndex == 1) {
+            column = "Кабинет";
+        }
+        if (columnIndex == 2) {
+            column = "Дата";
+        }
+        if (columnIndex == 3) {
+            column = "Время получения";
+        }
+        if (columnIndex == 4) {
+            column = "Время возврата";
+        }
+
+        return column;
     }
 
     @Override
@@ -53,14 +64,25 @@ public class InfoTableModel implements TableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         Info info = infos.get(rowIndex);
-        return switch (columnIndex) {
-            case 0 -> info.getPersonName();
-            case 1 -> info.getCabinet();
-            case 2 -> info.getDateTake();
-            case 3 -> info.getTimeTake();
-            case 4 -> info.getTimeReturn();
-            default -> "";
-        };
+        String column = null;
+
+        if (columnIndex == 0) {
+            column = info.getPersonName();
+        }
+        if (columnIndex == 1) {
+            column = info.getCabinet();
+        }
+        if (columnIndex == 2) {
+            column = info.getDateTake();
+        }
+        if (columnIndex == 3) {
+            column = info.getTimeTake();
+        }
+        if (columnIndex == 4) {
+            column = info.getTimeReturn();
+        }
+
+        return column;
     }
 
     @Override

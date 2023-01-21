@@ -27,10 +27,7 @@ public class PersonRepository {
 
     public void createPerson(Person person) throws SQLException {
         String query = ("INSERT INTO persons (uid, name) " +
-                "VALUES ('%s','%s');")
-                .formatted(person.getUid(),
-                        person.getName()
-                );
+                "VALUES ('"+person.getUid()+"','"+person.getName()+"');");
 
         System.out.println(query);
 
@@ -43,10 +40,7 @@ public class PersonRepository {
 
     public void updatePerson(Person person) throws SQLException {
         int id = person.getId();
-        String query = ("UPDATE persons SET uid = '%s', name = '%s' WHERE id = " + id + ";")
-                .formatted(person.getUid(),
-                        person.getName()
-                );
+        String query = ("UPDATE persons SET uid = '"+person.getUid()+"', name = '"+person.getName()+"' WHERE id = " + id + ";");
         System.out.println(query);
 
         statement = connection.createStatement();

@@ -28,15 +28,9 @@ public class InfoRepository {
     public void createInfo(Info info) throws SQLException {
         String query = ("INSERT INTO info (personName, personUid, " +
                 "cabinet, cabinetUid, dateTake, timeTake, timeReturn) " +
-                "VALUES ('%s','%s', '%s', '%s', '%s', '%s', '%s');")
-                .formatted(info.getPersonName(),
-                        info.getPersonUid(),
-                        info.getCabinet(),
-                        info.getCabinetUid(),
-                        info.getDateTake(),
-                        info.getTimeTake(),
-                        info.getTimeReturn()
-                );
+                "VALUES ('"+info.getPersonName()+"','"+info.getPersonUid()+"'," +
+                " '"+info.getCabinet()+"', '"+info.getCabinetUid()+"'," +
+                " '"+info.getDateTake()+"', '"+info.getTimeTake()+"', '"+info.getTimeReturn()+"');");
 
         System.out.println(query);
 
@@ -45,16 +39,8 @@ public class InfoRepository {
     }
 
     public void updateInfo(Info info, int id) throws SQLException {
-        String query = ("UPDATE info SET personName = '%s', personUid = '%s', cabinet = '%s'," +
-                " cabinetUid = '%s', dateTake = '%s', timeTake = '%s', timeReturn = '%s' WHERE id = " + id + ";")
-                .formatted(info.getPersonName(),
-                        info.getPersonUid(),
-                        info.getCabinet(),
-                        info.getCabinetUid(),
-                        info.getDateTake(),
-                        info.getTimeTake(),
-                        info.getTimeReturn()
-                );
+        String query = ("UPDATE info SET personName = '"+ info.getPersonName() + "', personUid = '"+info.getPersonUid()+"', cabinet = '"+info.getCabinet()+"'," +
+                " cabinetUid = '"+info.getCabinetUid()+"', dateTake = '"+info.getDateTake()+"', timeTake = '"+info.getTimeTake()+"', timeReturn = '"+info.getTimeReturn()+"' WHERE id = " + id + ";");
         System.out.println(query);
 
         statement = connection.createStatement();
@@ -66,8 +52,8 @@ public class InfoRepository {
 
         statement = connection.createStatement();
         String query = ("SELECT id, personName, personUid, cabinet, cabinetUid, dateTake, " +
-                "timeTake, timeReturn FROM info WHERE personUid = '%s' AND dateTake = '%s' ;")
-                .formatted(uid, date);
+                "timeTake, timeReturn FROM info WHERE personUid = '" + uid + "' AND dateTake = '"+ date +"' ;");
+
         ResultSet resultSet = statement.executeQuery(query);
 
         while (resultSet.next()) {
@@ -92,8 +78,7 @@ public class InfoRepository {
 
         statement = connection.createStatement();
         String query = ("SELECT id, personName, personUid, cabinet, cabinetUid, dateTake," +
-                " timeTake, timeReturn FROM info WHERE cabinetUid = '%s' AND dateTake = '%s'; ")
-                .formatted(uid, date);
+                " timeTake, timeReturn FROM info WHERE cabinetUid = '" + uid + "' AND dateTake = '" + date + "'; ");
         ResultSet resultSet = statement.executeQuery(query);
 
         while (resultSet.next()) {
@@ -118,8 +103,7 @@ public class InfoRepository {
 
         statement = connection.createStatement();
         String query = ("SELECT id, personName, personUid, cabinet, cabinetUid, " +
-                "dateTake, timeTake, timeReturn FROM info WHERE dateTake = '%s' ;")
-                .formatted(today);
+                "dateTake, timeTake, timeReturn FROM info WHERE dateTake = '" + today + "' ;");
         ResultSet resultSet = statement.executeQuery(query);
 
         while (resultSet.next()) {

@@ -13,8 +13,6 @@ import com.george.keyControll.viewModel.PersonViewModel;
 import gnu.io.NRSerialPort;
 
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -24,55 +22,61 @@ public class MainView {
     public JPanel mainPanel;
     private JButton settingsButton;
     private JTable keysTableView;
-    private JLabel personNameLabel;
-    private JLabel cabinetPersonLabel;
-    private JButton scanCardButton;
     private JButton keyAvailableButton;
     private JTextField dateTextField;
     private JButton confirmDateButton;
-    private JLabel welcomeLabel;
-    private JButton exportDataButton;
+    private JLabel scanLabel;
     private JButton editRowButton;
+    private JLabel personNameLabel;
+    private JLabel cabinetLabel;
     private final TimeUtils timeUtils = new TimeUtils();
     private final TextValidator textValidator = new TextValidator();
     private final InfoViewModel infoViewModel = new InfoViewModel();
     private final KeyViewModel keyViewModel = new KeyViewModel();
     private final PersonViewModel personViewModel = new PersonViewModel();
+
     private ArrayList<Info> arrayListInfo;
     private TableModel tableModel;
     private final String currentDay;
-    private boolean scan;
     private NRSerialPort serial;
 
+    String port = "no connection";
     public MainView() {
-        int baudRate = 9600;
-        String port = "no connection";
 
-        for (String ports : NRSerialPort.getAvailableSerialPorts()) {
-            System.out.println("Available port: " + ports);
-            port = ports;
-        }
+        Thread scannerThread = new Thread(() -> {
+            int baudRate = 9600;
 
-        if (port.equals("no connection")) {
-            JOptionPane.showMessageDialog(mainPanel,
-                    "Сканер не найден. Попробуйте подключить сканер в другой разъем." +
-                            "\nФункционал программы будет ограничен.",
-                    "Ошибка!",
-                    JOptionPane.ERROR_MESSAGE);
-        } else {
-            serial = new NRSerialPort(port, baudRate);
-            serial.connect();
-            scanCardButton.addActionListener(e -> scanUidCard());
-        }
+            for (String ports : NRSerialPort.getAvailableSerialPorts()) {
+                System.out.println("Available port: " + ports);
+                port = ports;
+            }
+
+            if (port.equals("no connection")) {
+                JOptionPane.showMessageDialog(mainPanel,
+                        "Сканер не найден. Попробуйте подключить сканер в другой разъем." +
+                                "\nФункционал программы будет ограничен.",
+                        "Ошибка!",
+                        JOptionPane.ERROR_MESSAGE);
+            } else {
+                serial = new NRSerialPort(port, baudRate);
+                serial.connect();
+
+                while (true) {
+                    String card = scanUidCard();
+                    String key = scanUidKey();
+                    infoBehaviour(card,key);
+                }
+            }
+        });
+        scannerThread.start();
 
         currentDay = timeUtils.getDate();
-        setWelcomeText();
+        dateTextField.setText(currentDay);
 
         arrayListInfo = infoViewModel.getInfoByDate(currentDay);
         tableModel = new InfoTableModel(arrayListInfo);
         keysTableView.setModel(tableModel);
 
-        String finalPort = port;
         editRowButton.addActionListener(e -> {
             System.out.println(keysTableView.getSelectedRow());
             int row = keysTableView.getSelectedRow();
@@ -88,7 +92,8 @@ public class MainView {
             Info updateInfo = arrayListInfo.get(row);
             int id = updateInfo.getId();
 
-            if(!finalPort.equals("no connection"))
+            scannerThread.interrupt();
+            if(!port.equals("no connection"))
                 serial.disconnect();
             Main.closeMainView();
             Main.startEditTableView(updateInfo, id);
@@ -112,59 +117,63 @@ public class MainView {
         settingsButton.addActionListener(e -> {
             Main.startSettingsView();
             Main.closeMainView();
-            if(!finalPort.equals("no connection"))
+            scannerThread.interrupt();
+            if(!port.equals("no connection"))
                 serial.disconnect();
         });
 
     }
 
-    private void scanUidCard() {
-        scan = true;
-        String cardUid = null;
-        DataInputStream ins = new DataInputStream(serial.getInputStream());
+    private String scanUidCard() {
+        System.out.println("\nОТСКАНИРУЙТЕ КАРТУ");
+        scanLabel.setText("ОТСКАНИРУЙТЕ КАРТУ");
+        return getUid();
+    }
+    private String scanUidKey() {
+        System.out.println("ОТСКАНИРУЙТЕ КЛЮЧ");
+        scanLabel.setText("ОТСКАНИРУЙТЕ КЛЮЧ");
 
-        try {
-            while (scan) {
-                if (ins.available() > 0) {
-                    cardUid = ins.readLine();
-                    if (cardUid.length() != 0) {
-                        scan = false;
-                        System.out.println("CardUid: " + cardUid);
-                    }
-                }
-            }
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-
-        scanUidKey(cardUid);
+        return getUid();
     }
 
-    private void scanUidKey(String cardUid) {
-        String keyUid = null;
+    private String getUid() {
         DataInputStream ins = new DataInputStream(serial.getInputStream());
-
-        scan = true;
+        String uid;
         try {
-            while (scan) {
+            while (true) {
                 if (ins.available() > 0) {
-                    keyUid = ins.readLine();
-                    if (keyUid.length() != 0) {
-                        scan = false;
-                        System.out.println("KeyUid: " + keyUid);
+                    uid = ins.readLine();
+                    if (uid.length() != 0) {
+                        System.out.println("uid" + uid);
+                        return uid;
                     }
                 }
             }
+
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-
-        infoBehaviour(cardUid, keyUid);
     }
 
     private void infoBehaviour(String cardUid, String keyUid) {
         Person person = personViewModel.getPersonByUid(cardUid);
         Key key = keyViewModel.getKeyByUid(keyUid);
+
+        if(person == null) {
+            JOptionPane.showMessageDialog(mainPanel,
+                    "Не удальсь найти карту в базе! Попробуйте приложить другую карту",
+                    "Ошибка!",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if(key == null) {
+            JOptionPane.showMessageDialog(mainPanel,
+                    "Не удальсь найти ключ в базе! Вы уверены что приложили ключ?",
+                    "Ошибка!",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         Info infoByCard = infoViewModel.getInfoByPersonUid(cardUid, currentDay);
         Info infoByKey = infoViewModel.getInfoByKeyUidAndDate(keyUid, currentDay);
@@ -201,6 +210,9 @@ public class MainView {
                 Key updateAvailable = new Key(key.getUid(), key.getNumber(), "true");
                 keyViewModel.updateKey(updateAvailable, key.getId());
 
+                personNameLabel.setText("Работник: " + person.getName());
+                cabinetLabel.setText("Кабинет: " + key.getNumber() + " СДАН НА ПОСТ ОХРАНЫ.");
+
                 updateTable(currentDay);
             } else {
                 createInfo(person, key);
@@ -219,18 +231,13 @@ public class MainView {
         keyViewModel.updateKey(updateAvailable, key.getId());
 
         personNameLabel.setText("Работник: " + person.getName());
-        cabinetPersonLabel.setText("Кабинет: " + key.getNumber());
+        cabinetLabel.setText("Кабинет: " + key.getNumber());
 
         updateTable(currentDay);
     }
 
     private boolean validateField(String date) {
         return textValidator.isEmptyField(date);
-    }
-
-    private void setWelcomeText() {
-        welcomeLabel.setText("Добро пожаловать, сегодня " +
-                currentDay);
     }
 
     public void updateTable(String currentDay) {

@@ -44,7 +44,7 @@ public class Main {
         mainFrame = new JFrame("Главная");
         mainFrame.setContentPane(new MainView().mainPanel);
         mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        mainFrame.setSize(1280, 720);
+        mainFrame.setSize(800, 400);
         mainFrame.setLocationRelativeTo(null);
         mainFrame.setVisible(true);
     }
@@ -112,6 +112,10 @@ public class Main {
     }
     public static void closeEditTable() {
         editTableFrame.dispatchEvent(new WindowEvent(editTableFrame, WindowEvent.WINDOW_CLOSING));
+    }
+
+    public static void closeApp() {
+        System.exit(0);
     }
 
 }
