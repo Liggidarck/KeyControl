@@ -39,8 +39,8 @@ public class MainView {
     private TableModel tableModel;
     private final String currentDay;
     private NRSerialPort serial;
+    private String port = "no connection";
 
-    String port = "no connection";
     public MainView() {
 
         Thread scannerThread = new Thread(() -> {
@@ -64,7 +64,7 @@ public class MainView {
                 while (true) {
                     String card = scanUidCard();
                     String key = scanUidKey();
-                    infoBehaviour(card,key);
+                    infoBehaviour(card, key);
                 }
             }
         });
@@ -81,7 +81,7 @@ public class MainView {
             System.out.println(keysTableView.getSelectedRow());
             int row = keysTableView.getSelectedRow();
 
-            if(row == -1) {
+            if (row == -1) {
                 JOptionPane.showMessageDialog(mainPanel,
                         "Выберите строчку в таблице перед изменением.",
                         "Внимание!",
@@ -92,8 +92,8 @@ public class MainView {
             Info updateInfo = arrayListInfo.get(row);
             int id = updateInfo.getId();
 
-            scannerThread.interrupt();
-            if(!port.equals("no connection"))
+            scannerThread.stop();
+            if (!port.equals("no connection"))
                 serial.disconnect();
             Main.closeMainView();
             Main.startEditTableView(updateInfo, id);
@@ -117,9 +117,9 @@ public class MainView {
         settingsButton.addActionListener(e -> {
             Main.startSettingsView();
             Main.closeMainView();
-            scannerThread.interrupt();
-            if(!port.equals("no connection"))
+            if (!port.equals("no connection"))
                 serial.disconnect();
+            scannerThread.stop();
         });
 
     }
@@ -129,6 +129,7 @@ public class MainView {
         scanLabel.setText("ОТСКАНИРУЙТЕ КАРТУ");
         return getUid();
     }
+
     private String scanUidKey() {
         System.out.println("ОТСКАНИРУЙТЕ КЛЮЧ");
         scanLabel.setText("ОТСКАНИРУЙТЕ КЛЮЧ");
@@ -159,7 +160,7 @@ public class MainView {
         Person person = personViewModel.getPersonByUid(cardUid);
         Key key = keyViewModel.getKeyByUid(keyUid);
 
-        if(person == null) {
+        if (person == null) {
             JOptionPane.showMessageDialog(mainPanel,
                     "Не удальсь найти карту в базе! Попробуйте приложить другую карту",
                     "Ошибка!",
@@ -167,7 +168,7 @@ public class MainView {
             return;
         }
 
-        if(key == null) {
+        if (key == null) {
             JOptionPane.showMessageDialog(mainPanel,
                     "Не удальсь найти ключ в базе! Вы уверены что приложили ключ?",
                     "Ошибка!",

@@ -51,7 +51,7 @@ public class Main {
 
     public static void startSettingsView() {
         settingsFrame = new JFrame("Настроки");
-        settingsFrame.setContentPane(new SettingsView().personsPanel);
+        settingsFrame.setContentPane(new SettingsView().settingsPanel);
         settingsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         settingsFrame.setSize(400, 500);
         settingsFrame.setLocationRelativeTo(null);

@@ -3,24 +3,33 @@ package com.george.keyControll.view.settings;
 import com.george.keyControll.Main;
 import com.george.keyControll.model.Key;
 import com.george.keyControll.model.Person;
+import com.george.keyControll.model.table.InfoTableModel;
+import com.george.keyControll.model.table.KeyTableModel;
+import com.george.keyControll.model.table.PersonTableModel;
 import com.george.keyControll.viewModel.KeyViewModel;
 import com.george.keyControll.viewModel.PersonViewModel;
 
 import javax.swing.*;
+import javax.swing.table.TableModel;
 import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
 public class SettingsView {
-    public JPanel personsPanel;
-    private JTabbedPane tabbedPane1;
-    private JList<String> personList;
+    public JPanel settingsPanel;
     private JButton addPersonButton;
     private JComboBox<String> themeComboBox;
     private JButton saveSettingsButton;
-    private JList<String> keyList;
     private JButton addKeyButton;
     private JButton homeButton;
     private JTextField pathDBTextField;
+    private JTable personTable;
+    private JTable keyTable;
+    private JButton editPersonButton;
+    private JTextField personNameTextField;
+    private JButton searchPersonButton;
+    private JTextField keyTextField;
+    private JButton searchKeyButton;
+    private JButton editKeyButton;
 
     private final Preferences appPreferences;
 
@@ -34,7 +43,7 @@ public class SettingsView {
             appPreferences.put("theme", theme);
             appPreferences.put("databasePath", path);
 
-            JOptionPane.showMessageDialog(personsPanel,
+            JOptionPane.showMessageDialog(settingsPanel,
                     "Внимание! Изменения вступят в силу только после перезапуска.",
                     "Внимание!",
                     JOptionPane.WARNING_MESSAGE);
@@ -53,79 +62,89 @@ public class SettingsView {
             Main.closeSettingsView();
         });
 
-        KeyViewModel keyViewModel = new KeyViewModel();
-
-        ArrayList<Key> allKeys = keyViewModel.getAllKeys();
-        ArrayList<String> nameKeys = new ArrayList<>();
-        ArrayList<Key> listKeys = new ArrayList<>();
-
-        for (Key key: allKeys) {
-            nameKeys.add(key.getNumber());
-            listKeys.add(key);
-        }
-
-        DefaultListModel<String> keyListModel = new DefaultListModel<>();
-
-        for(String name: nameKeys) {
-            keyListModel.addElement(name);
-        }
-        keyList.setModel(keyListModel);
-
-        keyList.addListSelectionListener(event -> {
-            if (event.getValueIsAdjusting()) {
-                int keyIndex = keyList.getSelectedIndex();
-
-                Key key = listKeys.get(keyIndex);
-                key.setId(key.getId());
-
-                Main.startAddEditKeyView(key);
-                Main.closeSettingsView();
-            }
-        });
-
         homeButton.addActionListener(e -> {
             Main.startMainView();
             Main.closeSettingsView();
         });
 
-        initPersonList();
+        KeyViewModel keyViewModel = new KeyViewModel();
+        ArrayList<Key> allKeys = keyViewModel.getAllKeys();
+        TableModel tableKeyModel = new KeyTableModel(allKeys);
+        keyTable.setModel(tableKeyModel);
 
-    }
-
-    private void initPersonList() {
-        PersonViewModel personViewModel = new PersonViewModel();
-
-        ArrayList<Person> allPersons = personViewModel.getAllPersons();
-
-        ArrayList<String> usersNames = new ArrayList<>();
-        ArrayList<Person> listPersons = new ArrayList<>();
-
-        for (Person person : allPersons) {
-            usersNames.add(person.getName());
-            listPersons.add(person);
-        }
-
-        DefaultListModel<String> personListModel = new DefaultListModel<>();
-
-        for(String name: usersNames) {
-            personListModel.addElement(name);
-        }
-
-        personList.setModel(personListModel);
-
-        personList.addListSelectionListener(event -> {
-            if (event.getValueIsAdjusting()) {
-                int userIndex = personList.getSelectedIndex();
-                Person person = listPersons.get(userIndex);
-                person.setId(person.getId());
-
-                System.out.println(person.getId());
-
-                Main.startAddEditPersonView(person);
-                Main.closeSettingsView();
+        editKeyButton.addActionListener(e -> {
+            int row = keyTable.getSelectedRow();
+            if (row == -1) {
+                showErrorTable("Выберите строчку в таблице перед изменением.");
+                return;
             }
+
+            Key key = allKeys.get(row);
+            key.setId(key.getId());
+
+            Main.startAddEditKeyView(key);
+            Main.closeSettingsView();
         });
+
+        searchKeyButton.addActionListener(e -> {
+            String keyNumber = keyTextField.getText();
+            Key key = keyViewModel.getKeyByNumber(keyNumber);
+
+            if(key == null) {
+                showErrorTable("Кабинет не найден!");
+                return;
+            }
+
+            key.setId(key.getId());
+            Main.startAddEditKeyView(key);
+            Main.closeSettingsView();
+        });
+
+        PersonViewModel personViewModel = new PersonViewModel();
+        ArrayList<Person> allPersons = personViewModel.getAllPersons();
+        TableModel tablePersonModel = new PersonTableModel(allPersons);
+        personTable.setModel(tablePersonModel);
+
+        editPersonButton.addActionListener(e -> {
+            int row = personTable.getSelectedRow();
+
+            if (row == -1) {
+                showErrorTable("Выберите строчку в таблице перед изменением.");
+                return;
+            }
+
+            Person updatePerson = allPersons.get(row);
+            updatePerson.setId(updatePerson.getId());
+
+            Main.startAddEditPersonView(updatePerson);
+            Main.closeSettingsView();
+        });
+
+        searchPersonButton.addActionListener(e -> {
+            String personName = personNameTextField.getText();
+            Person person = personViewModel.getPersonByName(personName);
+
+            if(person == null) {
+                showErrorTable("Пользователь не найден!");
+                return;
+            }
+
+            person.setId(person.getId());
+
+            Main.startAddEditPersonView(person);
+            Main.closeSettingsView();
+
+        });
+
     }
+
+    private void showErrorTable(String message) {
+        JOptionPane.showMessageDialog(settingsPanel,
+                message,
+                "Внимание!",
+                JOptionPane.WARNING_MESSAGE);
+    }
+
 
     private void setPreferences() {
         String theme = appPreferences.get("theme", "Светлая");
@@ -133,4 +152,5 @@ public class SettingsView {
         themeComboBox.setSelectedItem(theme);
         pathDBTextField.setText(databasePath);
     }
+
 }

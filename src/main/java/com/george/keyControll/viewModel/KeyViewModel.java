@@ -46,6 +46,14 @@ public class KeyViewModel {
         }
     }
 
+    public Key getKeyByNumber(String keyNumber) {
+        try {
+            return keyRepository.getKeyByNumber(keyNumber);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public ArrayList<Key> getAllKeys() {
         try {
             return keyRepository.getAllKeys();

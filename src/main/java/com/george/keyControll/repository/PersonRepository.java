@@ -67,6 +67,26 @@ public class PersonRepository {
         return person;
     }
 
+    public Person getPersonByName(String name) throws SQLException {
+        Person person = null;
+
+        String query = "SELECT id, uid, name FROM persons WHERE name = '" + name + "'";
+        System.out.println(query);
+        statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query);
+
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String uid = resultSet.getString("uid");
+            String namePerson = resultSet.getString("name");
+
+            person = new Person(uid, namePerson);
+            person.setId(id);
+        }
+
+        return person;
+    }
+
     public void deletePerson(int id) throws SQLException {
         String query = "DELETE FROM persons WHERE id = " + id;
         statement = connection.createStatement();

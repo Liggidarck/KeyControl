@@ -38,6 +38,14 @@ public class PersonViewModel {
         }
     }
 
+    public Person getPersonByName(String name) {
+        try {
+            return personRepository.getPersonByName(name);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void deletePerson(int id) {
         try {
             personRepository.deletePerson(id);
