@@ -5,6 +5,7 @@ import com.george.keyControll.repository.InfoRepository;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class InfoViewModel {
     private final InfoRepository infoRepository;
@@ -32,6 +33,14 @@ public class InfoViewModel {
     public Info getInfoByKeyUidAndDate(String uid, String date) {
         try {
             return infoRepository.getInfoByKeyUidAndDate(uid, date);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Info> getTransferList(String uid, String date) {
+        try {
+            return infoRepository.getListInfoByPersonUidAndDate(uid, date);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

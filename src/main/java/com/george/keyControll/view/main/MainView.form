@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.george.keyControll.view.MainView">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.george.keyControll.view.main.MainView">
   <grid id="27dc6" binding="mainPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
     <constraints>
       <xy x="20" y="20" width="804" height="533"/>
@@ -34,7 +34,7 @@
             </constraints>
             <properties>
               <font size="24"/>
-              <text value=""/>
+              <text value="Пользователь:"/>
             </properties>
           </component>
           <component id="8b666" class="javax.swing.JLabel" binding="cabinetLabel">
@@ -43,7 +43,7 @@
             </constraints>
             <properties>
               <font size="24"/>
-              <text value=""/>
+              <text value="Кабинет:"/>
             </properties>
           </component>
           <component id="ca310" class="javax.swing.JSeparator">
@@ -54,7 +54,7 @@
           </component>
         </children>
       </grid>
-      <grid id="cbb8" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="cbb8" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="10" left="0" bottom="10" right="10"/>
         <constraints border-constraint="East"/>
         <properties/>
@@ -67,10 +67,26 @@
           </vspacer>
           <component id="7ea50" class="javax.swing.JButton" binding="settingsButton">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Настройки"/>
+            </properties>
+          </component>
+          <component id="79ef7" class="javax.swing.JButton" binding="keyAvailableButton">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Доступность ключей"/>
+            </properties>
+          </component>
+          <component id="13a9e" class="javax.swing.JButton" binding="exitButton">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Выйти"/>
             </properties>
           </component>
         </children>
@@ -140,14 +156,6 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="79ef7" class="javax.swing.JButton" binding="keyAvailableButton">
-                <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Доступность ключей"/>
-                </properties>
-              </component>
               <hspacer id="44f7">
                 <constraints>
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -159,6 +167,14 @@
                 </constraints>
                 <properties>
                   <text value="Изменить выбранную строчку"/>
+                </properties>
+              </component>
+              <component id="b3315" class="javax.swing.JButton" binding="transferButton">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Передать ключ"/>
                 </properties>
               </component>
             </children>

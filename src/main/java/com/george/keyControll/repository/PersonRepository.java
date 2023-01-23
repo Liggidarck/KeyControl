@@ -27,7 +27,7 @@ public class PersonRepository {
 
     public void createPerson(Person person) throws SQLException {
         String query = ("INSERT INTO persons (uid, name) " +
-                "VALUES ('"+person.getUid()+"','"+person.getName()+"');");
+                "VALUES ('" + person.getUid() + "','" + person.getName() + "');");
 
         System.out.println(query);
 
@@ -40,7 +40,7 @@ public class PersonRepository {
 
     public void updatePerson(Person person) throws SQLException {
         int id = person.getId();
-        String query = ("UPDATE persons SET uid = '"+person.getUid()+"', name = '"+person.getName()+"' WHERE id = " + id + ";");
+        String query = ("UPDATE persons SET uid = '" + person.getUid() + "', name = '" + person.getName() + "' WHERE id = " + id + ";");
         System.out.println(query);
 
         statement = connection.createStatement();
@@ -66,6 +66,25 @@ public class PersonRepository {
 
         return person;
     }
+
+    public Person getPersonById(int id) throws SQLException {
+        Person person = null;
+
+        String query = "SELECT id, uid, name FROM persons WHERE id = " + id;
+        statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query);
+
+        while (resultSet.next()) {
+            String uid = resultSet.getString("uid");
+            String namePerson = resultSet.getString("name");
+
+            person = new Person(uid, namePerson);
+            person.setId(id);
+        }
+
+        return person;
+    }
+
 
     public Person getPersonByName(String name) throws SQLException {
         Person person = null;

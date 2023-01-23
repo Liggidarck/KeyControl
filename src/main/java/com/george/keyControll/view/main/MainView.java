@@ -1,4 +1,4 @@
-package com.george.keyControll.view;
+package com.george.keyControll.view.main;
 
 import com.george.keyControll.Main;
 import com.george.keyControll.model.Info;
@@ -29,6 +29,8 @@ public class MainView {
     private JButton editRowButton;
     private JLabel personNameLabel;
     private JLabel cabinetLabel;
+    private JButton transferButton;
+    private JButton exitButton;
     private final TimeUtils timeUtils = new TimeUtils();
     private final TextValidator textValidator = new TextValidator();
     private final InfoViewModel infoViewModel = new InfoViewModel();
@@ -42,6 +44,7 @@ public class MainView {
     private String port = "no connection";
 
     public MainView() {
+        scanLabel.setText("ИНИЦИАЛИЗАЦИЯ... ПОЖАЛУЙСТА, ПОДОЖДИТЕ");
 
         Thread scannerThread = new Thread(() -> {
             int baudRate = 9600;
@@ -57,6 +60,8 @@ public class MainView {
                                 "\nФункционал программы будет ограничен.",
                         "Ошибка!",
                         JOptionPane.ERROR_MESSAGE);
+
+                scanLabel.setText("СКАНЕР НЕ ПОДКЛЮЧЕН");
             } else {
                 serial = new NRSerialPort(port, baudRate);
                 serial.connect();
@@ -122,6 +127,15 @@ public class MainView {
             scannerThread.stop();
         });
 
+        transferButton.addActionListener(e -> {
+            scannerThread.stop();
+            if (!port.equals("no connection"))
+                serial.disconnect();
+            Main.startTransferView();
+            Main.closeMainView();
+        });
+
+        exitButton.addActionListener(e -> Main.closeApp());
     }
 
     private String scanUidCard() {
@@ -211,7 +225,7 @@ public class MainView {
                 Key updateAvailable = new Key(key.getUid(), key.getNumber(), "true");
                 keyViewModel.updateKey(updateAvailable, key.getId());
 
-                personNameLabel.setText("Работник: " + person.getName());
+                personNameLabel.setText("Пользователь: " + person.getName());
                 cabinetLabel.setText("Кабинет: " + key.getNumber() + " СДАН НА ПОСТ ОХРАНЫ.");
 
                 updateTable(currentDay);
@@ -231,7 +245,7 @@ public class MainView {
         Key updateAvailable = new Key(key.getUid(), key.getNumber(), "false");
         keyViewModel.updateKey(updateAvailable, key.getId());
 
-        personNameLabel.setText("Работник: " + person.getName());
+        personNameLabel.setText("Пользователь: " + person.getName());
         cabinetLabel.setText("Кабинет: " + key.getNumber());
 
         updateTable(currentDay);

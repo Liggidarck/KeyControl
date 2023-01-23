@@ -4,6 +4,7 @@ import com.george.keyControll.model.Info;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.prefs.Preferences;
 
 public class InfoRepository {
@@ -96,6 +97,39 @@ public class InfoRepository {
         }
 
         return info;
+    }
+
+    public List<Info> getListInfoByPersonUidAndDate(String uid, String date) throws SQLException {
+        List<Info> infoList = new ArrayList<>();
+
+        statement = connection.createStatement();
+        String query = ("SELECT id, personName, personUid, cabinet, cabinetUid, dateTake," +
+                " timeTake, timeReturn FROM info WHERE personUid = '" + uid + "' AND dateTake = '" + date + "'; ");
+        System.out.println(query);
+        ResultSet resultSet = statement.executeQuery(query);
+
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String personName = resultSet.getString("personName");
+            String personUid = resultSet.getString("personUid");
+            String cabinet = resultSet.getString("cabinet");
+            String cabinetUid = resultSet.getString("cabinetUid");
+            String dateTake = resultSet.getString("dateTake");
+            String timeTake = resultSet.getString("timeTake");
+            String timeReturn = resultSet.getString("timeReturn");
+
+            if(timeReturn.equals("no time")) {
+                Info info = new Info(personName, personUid, cabinet, cabinetUid, dateTake, timeTake, timeReturn);
+                info.setId(id);
+
+                System.out.println(info.getPersonUid());
+
+                infoList.add(info);
+            }
+
+        }
+
+        return infoList;
     }
 
     public ArrayList<Info> getInfoByDate(String today) throws SQLException {

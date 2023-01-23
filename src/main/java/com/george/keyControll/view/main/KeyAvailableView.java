@@ -1,4 +1,4 @@
-package com.george.keyControll.view;
+package com.george.keyControll.view.main;
 
 import com.george.keyControll.model.Key;
 import com.george.keyControll.model.table.InfoTableModel;
