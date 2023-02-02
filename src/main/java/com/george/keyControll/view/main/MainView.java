@@ -17,20 +17,38 @@ import javax.swing.table.TableModel;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainView {
     public JPanel mainPanel;
     private JButton settingsButton;
-    private JTable keysTableView;
+    private JTable infoTable;
     private JButton keyAvailableButton;
     private JTextField dateTextField;
     private JButton confirmDateButton;
     private JLabel scanLabel;
-    private JButton editRowButton;
     private JLabel personNameLabel;
     private JLabel cabinetLabel;
     private JButton transferButton;
     private JButton exitButton;
+    private JTabbedPane tabbedPane;
+    private JTable tableTransfer;
+    private JLabel scanLabelTransfer;
+    private JLabel personNameLabelTransfer;
+    private JTextField codPersonTextField;
+    private JTextField namePersonTextField;
+    private JTextField uidPeronTextField;
+    private JTextField keyTextField;
+    private JTextField uidKeyTextField;
+    private JButton searchPersonButton;
+    private JTextField uidPersonInfoTextField;
+    private JTextField nameInfoTextField;
+    private JTextField uidKeyInfoTextField;
+    private JTextField cabinetInfoTextField;
+    private JTextField dateInfoTextField;
+    private JTextField timeTakeInfoTextField;
+    private JTextField timeReturnInfoTextField;
+    private JButton updateInfoButton;
     private final TimeUtils timeUtils = new TimeUtils();
     private final TextValidator textValidator = new TextValidator();
     private final InfoViewModel infoViewModel = new InfoViewModel();
@@ -38,10 +56,14 @@ public class MainView {
     private final PersonViewModel personViewModel = new PersonViewModel();
 
     private ArrayList<Info> arrayListInfo;
+
+    List<Info> infoTransferList;
+
     private TableModel tableModel;
-    private final String currentDay;
+    private TableModel tableTransferModel;
     private NRSerialPort serial;
     private String port = "no connection";
+    int infoId;
 
     public MainView() {
         scanLabel.setText("ИНИЦИАЛИЗАЦИЯ... ПОЖАЛУЙСТА, ПОДОЖДИТЕ");
@@ -62,12 +84,14 @@ public class MainView {
                         JOptionPane.ERROR_MESSAGE);
 
                 scanLabel.setText("СКАНЕР НЕ ПОДКЛЮЧЕН");
+                scanLabelTransfer.setText("СКАНЕР НЕ ПОДКЛЮЧЕН");
             } else {
                 serial = new NRSerialPort(port, baudRate);
                 serial.connect();
 
                 while (true) {
                     String card = scanUidCard();
+                    transferBehaviour(card);
                     String key = scanUidKey();
                     infoBehaviour(card, key);
                 }
@@ -75,33 +99,40 @@ public class MainView {
         });
         scannerThread.start();
 
-        currentDay = timeUtils.getDate();
-        dateTextField.setText(currentDay);
+        dateTextField.setText(timeUtils.getDate());
 
-        arrayListInfo = infoViewModel.getInfoByDate(currentDay);
+        arrayListInfo = infoViewModel.getInfoByDate(timeUtils.getDate());
         tableModel = new InfoTableModel(arrayListInfo);
-        keysTableView.setModel(tableModel);
+        infoTable.setModel(tableModel);
 
-        editRowButton.addActionListener(e -> {
-            System.out.println(keysTableView.getSelectedRow());
-            int row = keysTableView.getSelectedRow();
+        infoTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && infoTable.getSelectedRow() != -1) {
+                int row = infoTable.getSelectedRow();
 
-            if (row == -1) {
-                JOptionPane.showMessageDialog(mainPanel,
-                        "Выберите строчку в таблице перед изменением.",
-                        "Внимание!",
-                        JOptionPane.WARNING_MESSAGE);
-                return;
+                Info updateInfo = arrayListInfo.get(row);
+                infoId = updateInfo.getId();
+
+                nameInfoTextField.setText(updateInfo.getPersonName());
+                cabinetInfoTextField.setText(updateInfo.getCabinet());
+                dateInfoTextField.setText(updateInfo.getDateTake());
+                timeTakeInfoTextField.setText(updateInfo.getTimeTake());
+                timeReturnInfoTextField.setText(updateInfo.getTimeReturn());
+                uidPersonInfoTextField.setText(updateInfo.getPersonUid());
+                uidKeyInfoTextField.setText(updateInfo.getCabinetUid());
+
             }
+        });
 
-            Info updateInfo = arrayListInfo.get(row);
-            int id = updateInfo.getId();
-
-            scannerThread.stop();
-            if (!port.equals("no connection"))
-                serial.disconnect();
-            Main.closeMainView();
-            Main.startEditTableView(updateInfo, id);
+        updateInfoButton.addActionListener(e -> {
+            Info updateInfo = new Info(nameInfoTextField.getText(),
+                    uidPersonInfoTextField.getText(),
+                    cabinetInfoTextField.getText(),
+                    uidKeyInfoTextField.getText(),
+                    dateInfoTextField.getText(),
+                    timeTakeInfoTextField.getText(),
+                    timeReturnInfoTextField.getText());
+            new InfoViewModel().updateInfo(updateInfo, infoId);
+            updateTable(timeUtils.getDate());
         });
 
         confirmDateButton.addActionListener(e -> {
@@ -127,20 +158,69 @@ public class MainView {
             scannerThread.stop();
         });
 
-        transferButton.addActionListener(e -> {
-            scannerThread.stop();
-            if (!port.equals("no connection"))
-                serial.disconnect();
-            Main.startTransferView();
-            Main.closeMainView();
+        searchPersonButton.addActionListener(e -> {
+            String personId = codPersonTextField.getText();
+            Person person = personViewModel.getPersonById(Integer.parseInt(personId));
+            if(person == null) {
+                JOptionPane.showMessageDialog(mainPanel,
+                        "Введен неверный код.",
+                        "Внимание!",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            namePersonTextField.setText(person.getName());
+            uidPeronTextField.setText(person.getUid());
         });
 
         exitButton.addActionListener(e -> Main.closeApp());
     }
 
+    private void transferBehaviour(String card) {
+        Person person = personViewModel.getPersonByUid(card);
+        personNameLabelTransfer.setText("Пользователь: " + person.getName());
+
+        infoTransferList = infoViewModel.getTransferList(card, timeUtils.getDate());
+
+        if(infoTransferList.size() == 0) {
+            scanLabelTransfer.setText("Отсуствуют ключи для передачи");
+            return;
+        }
+
+        if(infoTransferList.size() == 1) {
+            Info tansferInfo = infoTransferList.get(0);
+            namePersonTextField.setText(tansferInfo.getPersonName());
+            uidPeronTextField.setText(tansferInfo.getPersonUid());
+            keyTextField.setText(tansferInfo.getCabinet());
+            uidKeyTextField.setText(tansferInfo.getCabinetUid());
+
+            transferButton(tansferInfo, tansferInfo.getId());
+            return;
+        }
+
+        scanLabelTransfer.setText("Выберите ключ");
+        tableTransferModel = new InfoTableModel(infoTransferList);
+        tableTransfer.setModel(tableTransferModel);
+    }
+
+    private void transferButton(Info info, int infoId) {
+        transferButton.addActionListener(e -> {
+            Info updateInfo = new Info(info.getPersonName(), info.getPersonUid(),
+                    info.getCabinet(), info.getCabinetUid(), info.getDateTake(), info.getTimeTake(), timeUtils.getTime());
+            infoViewModel.updateInfo(updateInfo, infoId);
+
+            Info createNewInfo = new Info(namePersonTextField.getText(), uidPeronTextField.getText(),
+                    info.getCabinet(), info.getCabinetUid(), info.getDateTake(), info.getTimeTake(), "no time");
+            infoViewModel.createInfo(createNewInfo);
+
+            updateTable(timeUtils.getDate());
+        });
+    }
+
     private String scanUidCard() {
         System.out.println("\nОТСКАНИРУЙТЕ КАРТУ");
         scanLabel.setText("ОТСКАНИРУЙТЕ КАРТУ");
+        scanLabelTransfer.setText("ОТСКАНИРУЙТЕ КАРТУ");
         return getUid();
     }
 
@@ -190,8 +270,8 @@ public class MainView {
             return;
         }
 
-        Info infoByCard = infoViewModel.getInfoByPersonUid(cardUid, currentDay);
-        Info infoByKey = infoViewModel.getInfoByKeyUidAndDate(keyUid, currentDay);
+        Info infoByCard = infoViewModel.getInfoByPersonUid(cardUid, timeUtils.getDate());
+        Info infoByKey = infoViewModel.getInfoByKeyUidAndDate(keyUid, timeUtils.getDate());
 
         // Запись в таблице по карте существует?
         if (infoByCard == null) {
@@ -228,7 +308,7 @@ public class MainView {
                 personNameLabel.setText("Пользователь: " + person.getName());
                 cabinetLabel.setText("Кабинет: " + key.getNumber() + " СДАН НА ПОСТ ОХРАНЫ.");
 
-                updateTable(currentDay);
+                updateTable(timeUtils.getDate());
             } else {
                 createInfo(person, key);
             }
@@ -248,7 +328,7 @@ public class MainView {
         personNameLabel.setText("Пользователь: " + person.getName());
         cabinetLabel.setText("Кабинет: " + key.getNumber());
 
-        updateTable(currentDay);
+        updateTable(timeUtils.getDate());
     }
 
     private boolean validateField(String date) {
@@ -259,6 +339,6 @@ public class MainView {
         arrayListInfo.clear();
         arrayListInfo = infoViewModel.getInfoByDate(currentDay);
         tableModel = new InfoTableModel(arrayListInfo);
-        keysTableView.setModel(tableModel);
+        infoTable.setModel(tableModel);
     }
 }

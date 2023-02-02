@@ -49,7 +49,7 @@ public class Main {
         mainFrame = new JFrame("Главная");
         mainFrame.setContentPane(new MainView().mainPanel);
         mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        mainFrame.setSize(800, 400);
+        mainFrame.setSize(1280, 720);
         mainFrame.setLocationRelativeTo(null);
         mainFrame.setVisible(true);
     }
