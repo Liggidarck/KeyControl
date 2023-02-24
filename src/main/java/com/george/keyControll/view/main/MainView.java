@@ -161,7 +161,7 @@ public class MainView {
         searchPersonButton.addActionListener(e -> {
             String personId = codPersonTextField.getText();
             Person person = personViewModel.getPersonById(Integer.parseInt(personId));
-            if(person == null) {
+            if (person == null) {
                 JOptionPane.showMessageDialog(mainPanel,
                         "Введен неверный код.",
                         "Внимание!",
@@ -178,23 +178,30 @@ public class MainView {
 
     private void transferBehaviour(String card) {
         Person person = personViewModel.getPersonByUid(card);
-        personNameLabelTransfer.setText("Пользователь: " + person.getName());
 
-        infoTransferList = infoViewModel.getTransferList(card, timeUtils.getDate());
+        if (person == null) {
 
-        if(infoTransferList.size() == 0) {
-            scanLabelTransfer.setText("Отсуствуют ключи для передачи");
             return;
         }
 
-        if(infoTransferList.size() == 1) {
-            Info tansferInfo = infoTransferList.get(0);
-            namePersonTextField.setText(tansferInfo.getPersonName());
-            uidPeronTextField.setText(tansferInfo.getPersonUid());
-            keyTextField.setText(tansferInfo.getCabinet());
-            uidKeyTextField.setText(tansferInfo.getCabinetUid());
+        infoTransferList = infoViewModel.getTransferList(card, timeUtils.getDate());
 
-            transferButton(tansferInfo, tansferInfo.getId());
+        if (infoTransferList.size() == 0) {
+            scanLabelTransfer.setText("Отсуствуют ключи для передачи");
+            personNameLabelTransfer.setText("");
+            return;
+        }
+
+        if (infoTransferList.size() == 1) {
+            scanLabelTransfer.setText("Найден ключ");
+            Info transferInfo = infoTransferList.get(0);
+            namePersonTextField.setText(transferInfo.getPersonName());
+            personNameLabelTransfer.setText(transferInfo.getPersonName() + " " + transferInfo.getCabinet());
+            uidPeronTextField.setText(transferInfo.getPersonUid());
+            keyTextField.setText(transferInfo.getCabinet());
+            uidKeyTextField.setText(transferInfo.getCabinetUid());
+
+            transferButton(transferInfo, transferInfo.getId());
             return;
         }
 
@@ -206,11 +213,18 @@ public class MainView {
     private void transferButton(Info info, int infoId) {
         transferButton.addActionListener(e -> {
             Info updateInfo = new Info(info.getPersonName(), info.getPersonUid(),
-                    info.getCabinet(), info.getCabinetUid(), info.getDateTake(), info.getTimeTake(), timeUtils.getTime());
+                    info.getCabinet(), info.getCabinetUid(), info.getDateTake(),
+                    info.getTimeTake(), timeUtils.getTime()
+            );
+
             infoViewModel.updateInfo(updateInfo, infoId);
 
-            Info createNewInfo = new Info(namePersonTextField.getText(), uidPeronTextField.getText(),
-                    info.getCabinet(), info.getCabinetUid(), info.getDateTake(), info.getTimeTake(), "no time");
+            Info createNewInfo = new Info(namePersonTextField.getText(),
+                    uidPeronTextField.getText(), info.getCabinet(),
+                    info.getCabinetUid(), info.getDateTake(),
+                    info.getTimeTake(), "no time"
+            );
+
             infoViewModel.createInfo(createNewInfo);
 
             updateTable(timeUtils.getDate());
@@ -285,12 +299,17 @@ public class MainView {
             return;
         }
 
+        if(infoByKey != infoByCard) {
+            return;
+        }
+
         String keyUidInfo = infoByKey.getCabinetUid();
 
         // Отсканированный ключ совпадает с таблицей?
         if (keyUidInfo.equals(keyUid)) {
             String timeReturn = infoByKey.getTimeReturn();
             int id = infoByKey.getId();
+
             if (timeReturn.equals("no time")) {
                 infoViewModel.updateInfo(new Info(
                         infoByKey.getPersonName(),
@@ -309,9 +328,12 @@ public class MainView {
                 cabinetLabel.setText("Кабинет: " + key.getNumber() + " СДАН НА ПОСТ ОХРАНЫ.");
 
                 updateTable(timeUtils.getDate());
-            } else {
-                createInfo(person, key);
+
+                return;
             }
+
+
+            createInfo(person, key);
         }
 
     }
