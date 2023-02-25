@@ -1,7 +1,6 @@
 package com.george.keyControll.view.main;
 
 import com.george.keyControll.model.Key;
-import com.george.keyControll.model.table.InfoTableModel;
 import com.george.keyControll.model.table.KeyAvailableTableModel;
 import com.george.keyControll.viewModel.KeyViewModel;
 
@@ -16,7 +15,7 @@ public class KeyAvailableView {
 
     private final KeyViewModel keyViewModel = new KeyViewModel();
     private ArrayList<Key> keys;
-    private ArrayList<Key> allFormattedKeys;
+    private final ArrayList<Key> allFormattedKeys;
 
     private TableModel model;
 

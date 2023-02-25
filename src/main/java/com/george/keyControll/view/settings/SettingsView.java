@@ -3,7 +3,6 @@ package com.george.keyControll.view.settings;
 import com.george.keyControll.Main;
 import com.george.keyControll.model.Key;
 import com.george.keyControll.model.Person;
-import com.george.keyControll.model.table.InfoTableModel;
 import com.george.keyControll.model.table.KeyTableModel;
 import com.george.keyControll.model.table.PersonTableModel;
 import com.george.keyControll.viewModel.KeyViewModel;

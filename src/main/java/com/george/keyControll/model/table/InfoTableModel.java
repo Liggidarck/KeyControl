@@ -10,17 +10,17 @@ import java.util.Set;
 
 public class InfoTableModel implements TableModel {
 
-    private final Set<TableModelListener> listeners = new HashSet<>();
+    private Set<TableModelListener> listeners = new HashSet<>();
 
-    private final List<Info> infos;
+    private final List<Info> infoList;
 
-    public InfoTableModel(List<Info> infos) {
-        this.infos = infos;
+    public InfoTableModel(List<Info> infoList) {
+        this.infoList = infoList;
     }
 
     @Override
     public int getRowCount() {
-        return infos.size();
+        return infoList.size();
     }
 
     @Override
@@ -63,7 +63,7 @@ public class InfoTableModel implements TableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Info info = infos.get(rowIndex);
+        Info info = infoList.get(rowIndex);
         String column = null;
 
         if (columnIndex == 0) {

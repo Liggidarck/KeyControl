@@ -70,9 +70,7 @@ public class AddEditPersonView {
 
         String finalPort = port;
 
-        backButton.addActionListener(e -> {
-            startSettings(finalPort);
-        });
+        backButton.addActionListener(e -> startSettings(finalPort));
 
         saveButton.addActionListener(e -> {
             Person newPerson = getPerson();

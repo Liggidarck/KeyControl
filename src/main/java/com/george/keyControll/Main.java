@@ -19,7 +19,6 @@ public class Main {
     private static JFrame settingsFrame;
     private static JFrame addEditPersonsFrame;
     private static JFrame addEditKeysFrame;
-    private static JFrame keyAvailableFrame;
     private static JFrame mainFrame;
 
 
@@ -75,7 +74,7 @@ public class Main {
     }
 
     public static void startKeyAvailableView() {
-        keyAvailableFrame = new JFrame("Доступность");
+        JFrame keyAvailableFrame = new JFrame("Доступность");
         keyAvailableFrame.setContentPane(new KeyAvailableView().keyAvailablePanel);
         keyAvailableFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         keyAvailableFrame.setSize(600, 400);

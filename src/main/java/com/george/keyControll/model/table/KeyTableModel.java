@@ -1,6 +1,5 @@
 package com.george.keyControll.model.table;
 
-import com.george.keyControll.model.Info;
 import com.george.keyControll.model.Key;
 
 import javax.swing.event.TableModelListener;
