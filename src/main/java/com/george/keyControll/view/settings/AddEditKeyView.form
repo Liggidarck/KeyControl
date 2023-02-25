@@ -13,6 +13,7 @@
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <font size="18"/>
           <text value="Идентификатор"/>
         </properties>
       </component>
@@ -27,13 +28,16 @@
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <font size="18"/>
+        </properties>
       </component>
       <component id="3480d" class="javax.swing.JLabel">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <font size="18"/>
           <text value="Номер"/>
         </properties>
       </component>
@@ -43,13 +47,16 @@
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <font size="18"/>
+        </properties>
       </component>
       <component id="276d6" class="javax.swing.JLabel">
         <constraints>
           <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <font size="18"/>
           <text value="Доступность"/>
         </properties>
       </component>
@@ -58,6 +65,7 @@
           <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <font size="18"/>
           <text value="Сканировать"/>
         </properties>
       </component>
@@ -67,6 +75,7 @@
         </constraints>
         <properties>
           <enabled value="true"/>
+          <font size="18"/>
           <text value="Доступен"/>
         </properties>
       </component>
@@ -75,6 +84,7 @@
           <grid row="9" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <font size="18"/>
           <text value="Сохранить"/>
         </properties>
       </component>
@@ -92,6 +102,7 @@
           <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <font size="18"/>
           <text value="Вернутся назад"/>
         </properties>
       </component>

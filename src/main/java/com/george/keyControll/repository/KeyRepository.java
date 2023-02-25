@@ -91,6 +91,25 @@ public class KeyRepository {
         return key;
     }
 
+    public Key getKeyById(int id) throws SQLException {
+        Key key = null;
+
+        String query = "SELECT id, uid, number, available FROM keys WHERE id = '" + id + "'";
+        statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query);
+
+        while (resultSet.next()) {
+            String uid = resultSet.getString("uid");
+            String number = resultSet.getString("number");
+            String available = resultSet.getString("available");
+
+            key = new Key(uid, number, available);
+            key.setId(id);
+        }
+
+        return key;
+    }
+
     public ArrayList<Key> getAllKeys() throws SQLException {
         ArrayList<Key> keys = new ArrayList<>();
 

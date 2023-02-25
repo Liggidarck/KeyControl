@@ -2,14 +2,10 @@ package com.george.keyControll;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
-import com.george.keyControll.model.Info;
 import com.george.keyControll.model.Key;
 import com.george.keyControll.model.Person;
-import com.george.keyControll.view.main.EditTableView;
 import com.george.keyControll.view.main.KeyAvailableView;
 import com.george.keyControll.view.main.MainView;
-import com.george.keyControll.view.main.transfer.TransferToPersonView;
-import com.george.keyControll.view.main.transfer.TransferView;
 import com.george.keyControll.view.settings.AddEditKeyView;
 import com.george.keyControll.view.settings.AddEditPersonView;
 import com.george.keyControll.view.settings.SettingsView;
@@ -24,11 +20,8 @@ public class Main {
     private static JFrame addEditPersonsFrame;
     private static JFrame addEditKeysFrame;
     private static JFrame keyAvailableFrame;
-    private static JFrame editTableFrame;
     private static JFrame mainFrame;
-    private static JFrame transferFrame;
 
-    private static JFrame transferToPersonFrame;
 
     public static void main(String[] args) {
         setUpWithPreferences();
@@ -63,15 +56,6 @@ public class Main {
         settingsFrame.setVisible(true);
     }
 
-    public static void startEditTableView(Info info, int id) {
-        editTableFrame = new JFrame("Изменить строчку");
-        editTableFrame.setContentPane(new EditTableView(info, id).editTablePanel);
-        editTableFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        editTableFrame.setSize(400, 500);
-        editTableFrame.setLocationRelativeTo(null);
-        editTableFrame.setVisible(true);
-    }
-
     public static void startAddEditPersonView(Person person) {
         addEditPersonsFrame = new JFrame("Добавить пользователя");
         addEditPersonsFrame.setContentPane(new AddEditPersonView(person).addEditPersonPanel);
@@ -99,34 +83,8 @@ public class Main {
         keyAvailableFrame.setVisible(true);
     }
 
-    public static void startTransferView() {
-        transferFrame = new JFrame("Передача ключа");
-        transferFrame.setContentPane(new TransferView().transferPanel);
-        transferFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        transferFrame.setSize(800, 400);
-        transferFrame.setLocationRelativeTo(null);
-        transferFrame.setVisible(true);
-    }
-
-    public static void startTransferToPersonView(Info info) {
-        transferToPersonFrame = new JFrame("Передача ключа");
-        transferToPersonFrame.setContentPane(new TransferToPersonView(info).transferPanel);
-        transferToPersonFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        transferToPersonFrame.setSize(800, 400);
-        transferToPersonFrame.setLocationRelativeTo(null);
-        transferToPersonFrame.setVisible(true);
-    }
-
     public static void closeSettingsView() {
         settingsFrame.dispatchEvent(new WindowEvent(settingsFrame, WindowEvent.WINDOW_CLOSING));
-    }
-
-    public static void closeTransferView() {
-        transferFrame.dispatchEvent(new WindowEvent(transferFrame, WindowEvent.WINDOW_CLOSING));
-    }
-
-    public static void closeTransferToPersonView() {
-        transferToPersonFrame.dispatchEvent(new WindowEvent(transferToPersonFrame, WindowEvent.WINDOW_CLOSING));
     }
 
     public static void closeAddEditPersons() {
@@ -140,9 +98,6 @@ public class Main {
 
     public static void closeMainView() {
         mainFrame.dispatchEvent(new WindowEvent(mainFrame, WindowEvent.WINDOW_CLOSING));
-    }
-    public static void closeEditTable() {
-        editTableFrame.dispatchEvent(new WindowEvent(editTableFrame, WindowEvent.WINDOW_CLOSING));
     }
 
     public static void closeApp() {

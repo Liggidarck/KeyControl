@@ -31,7 +31,6 @@ public class MainView {
     private JLabel cabinetLabel;
     private JButton transferButton;
     private JButton exitButton;
-    private JTabbedPane tabbedPane;
     private JTable tableTransfer;
     private JLabel scanLabelTransfer;
     private JLabel personNameLabelTransfer;
@@ -49,6 +48,10 @@ public class MainView {
     private JTextField timeTakeInfoTextField;
     private JTextField timeReturnInfoTextField;
     private JButton updateInfoButton;
+    private JTextField textFieldIdUser;
+    private JButton searchUserButton;
+    private JTextField textFieldIdKey;
+    private JButton searchKeyButton;
     private final TimeUtils timeUtils = new TimeUtils();
     private final TextValidator textValidator = new TextValidator();
     private final InfoViewModel infoViewModel = new InfoViewModel();
@@ -57,13 +60,10 @@ public class MainView {
 
     private ArrayList<Info> arrayListInfo;
 
-    List<Info> infoTransferList;
-
     private TableModel tableModel;
-    private TableModel tableTransferModel;
     private NRSerialPort serial;
     private String port = "no connection";
-    int infoId;
+    private int infoId;
 
     public MainView() {
         scanLabel.setText("ИНИЦИАЛИЗАЦИЯ... ПОЖАЛУЙСТА, ПОДОЖДИТЕ");
@@ -77,11 +77,8 @@ public class MainView {
             }
 
             if (port.equals("no connection")) {
-                JOptionPane.showMessageDialog(mainPanel,
-                        "Сканер не найден. Попробуйте подключить сканер в другой разъем." +
-                                "\nФункционал программы будет ограничен.",
-                        "Ошибка!",
-                        JOptionPane.ERROR_MESSAGE);
+                showErrorMessage("Сканер не найден. Попробуйте подключить сканер в другой разъем." +
+                        "\nФункционал программы будет ограничен.", "Ошибка");
 
                 scanLabel.setText("СКАНЕР НЕ ПОДКЛЮЧЕН");
                 scanLabelTransfer.setText("СКАНЕР НЕ ПОДКЛЮЧЕН");
@@ -138,10 +135,7 @@ public class MainView {
         confirmDateButton.addActionListener(e -> {
             String date = dateTextField.getText();
             if (validateField(date)) {
-                JOptionPane.showMessageDialog(mainPanel,
-                        "Это поле не может быть пустым.",
-                        "Ошибка!",
-                        JOptionPane.ERROR_MESSAGE);
+                showErrorMessage("Это поле не может быть пустым.", "Ошибка");
                 return;
             }
 
@@ -162,10 +156,7 @@ public class MainView {
             String personId = codPersonTextField.getText();
             Person person = personViewModel.getPersonById(Integer.parseInt(personId));
             if (person == null) {
-                JOptionPane.showMessageDialog(mainPanel,
-                        "Введен неверный код.",
-                        "Внимание!",
-                        JOptionPane.WARNING_MESSAGE);
+                showErrorMessage("Введен некорректный код", "Ошибка");
                 return;
             }
 
@@ -173,7 +164,39 @@ public class MainView {
             uidPeronTextField.setText(person.getUid());
         });
 
+        searchUserButton.addActionListener(e -> {
+            String personId = textFieldIdUser.getText();
+            Person person = personViewModel.getPersonById(Integer.parseInt(personId));
+            if (person == null) {
+                showErrorMessage("Введен некорректный код", "Ошибка");
+                return;
+            }
+
+            uidPersonInfoTextField.setText(person.getUid());
+            nameInfoTextField.setText(person.getName());
+        });
+
+        searchKeyButton.addActionListener(e -> {
+            String keyId = textFieldIdKey.getText();
+            Key key = keyViewModel.getKeyById(Integer.parseInt(keyId));
+
+            if (key == null) {
+                showErrorMessage("Введен некорректный код", "Ошибка");
+                return;
+            }
+
+            uidKeyInfoTextField.setText(key.getUid());
+            cabinetInfoTextField.setText(key.getNumber());
+        });
+
         exitButton.addActionListener(e -> Main.closeApp());
+    }
+
+    private void showErrorMessage(String message, String title) {
+        JOptionPane.showMessageDialog(
+                mainPanel, message, title,
+                JOptionPane.ERROR_MESSAGE
+        );
     }
 
     private void transferBehaviour(String card) {
@@ -184,7 +207,7 @@ public class MainView {
             return;
         }
 
-        infoTransferList = infoViewModel.getTransferList(card, timeUtils.getDate());
+        List<Info> infoTransferList = infoViewModel.getTransferList(card, timeUtils.getDate());
 
         if (infoTransferList.size() == 0) {
             scanLabelTransfer.setText("Отсуствуют ключи для передачи");
@@ -206,7 +229,7 @@ public class MainView {
         }
 
         scanLabelTransfer.setText("Выберите ключ");
-        tableTransferModel = new InfoTableModel(infoTransferList);
+        TableModel tableTransferModel = new InfoTableModel(infoTransferList);
         tableTransfer.setModel(tableTransferModel);
     }
 
@@ -269,18 +292,14 @@ public class MainView {
         Key key = keyViewModel.getKeyByUid(keyUid);
 
         if (person == null) {
-            JOptionPane.showMessageDialog(mainPanel,
-                    "Не удальсь найти карту в базе! Попробуйте приложить другую карту",
-                    "Ошибка!",
-                    JOptionPane.ERROR_MESSAGE);
+            showErrorMessage("Не удальсь найти карту в базе! Попробуйте приложить другую карту",
+                    "Ошибка");
             return;
         }
 
         if (key == null) {
-            JOptionPane.showMessageDialog(mainPanel,
-                    "Не удальсь найти ключ в базе! Вы уверены что приложили ключ?",
-                    "Ошибка!",
-                    JOptionPane.ERROR_MESSAGE);
+            showErrorMessage("Не удальсь найти ключ в базе! Вы уверены что приложили ключ?",
+                    "Ошибка!");
             return;
         }
 
@@ -296,10 +315,6 @@ public class MainView {
         // Запись в таблице по ключу существует?
         if (infoByKey == null) {
             createInfo(person, key);
-            return;
-        }
-
-        if(infoByKey != infoByCard) {
             return;
         }
 
