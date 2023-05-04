@@ -29,9 +29,9 @@ public class InfoRepository {
     public void createInfo(Info info) throws SQLException {
         String query = ("INSERT INTO info (personName, personUid, " +
                 "cabinet, cabinetUid, dateTake, timeTake, timeReturn) " +
-                "VALUES ('"+info.getPersonName()+"','"+info.getPersonUid()+"'," +
-                " '"+info.getCabinet()+"', '"+info.getCabinetUid()+"'," +
-                " '"+info.getDateTake()+"', '"+info.getTimeTake()+"', '"+info.getTimeReturn()+"');");
+                "VALUES ('" + info.getPersonName() + "','" + info.getPersonUid() + "'," +
+                " '" + info.getCabinet() + "', '" + info.getCabinetUid() + "'," +
+                " '" + info.getDateTake() + "', '" + info.getTimeTake() + "', '" + info.getTimeReturn() + "');");
 
         System.out.println(query);
 
@@ -40,9 +40,16 @@ public class InfoRepository {
     }
 
     public void updateInfo(Info info, int id) throws SQLException {
-        String query = ("UPDATE info SET personName = '"+ info.getPersonName() + "', personUid = '"+info.getPersonUid()+"', cabinet = '"+info.getCabinet()+"'," +
-                " cabinetUid = '"+info.getCabinetUid()+"', dateTake = '"+info.getDateTake()+"', timeTake = '"+info.getTimeTake()+"', timeReturn = '"+info.getTimeReturn()+"' WHERE id = " + id + ";");
+        String query = ("UPDATE info SET personName = '" + info.getPersonName() + "', personUid = '" + info.getPersonUid() + "', cabinet = '" + info.getCabinet() + "'," +
+                " cabinetUid = '" + info.getCabinetUid() + "', dateTake = '" + info.getDateTake() + "', timeTake = '" + info.getTimeTake() + "', timeReturn = '" + info.getTimeReturn() + "' WHERE id = " + id + ";");
         System.out.println(query);
+
+        statement = connection.createStatement();
+        statement.execute(query);
+    }
+
+    public void deleteInfo(int id) throws SQLException {
+        String query = "DELETE FROM info WHERE id = " + id;
 
         statement = connection.createStatement();
         statement.execute(query);
@@ -53,7 +60,7 @@ public class InfoRepository {
 
         statement = connection.createStatement();
         String query = ("SELECT id, personName, personUid, cabinet, cabinetUid, dateTake, " +
-                "timeTake, timeReturn FROM info WHERE personUid = '" + uid + "' AND dateTake = '"+ date +"' ;");
+                "timeTake, timeReturn FROM info WHERE personUid = '" + uid + "' AND dateTake = '" + date + "' ;");
 
         ResultSet resultSet = statement.executeQuery(query);
 
@@ -72,6 +79,37 @@ public class InfoRepository {
         }
 
         return info;
+    }
+
+    public List<Info> getListByKeyNumber(String keyNumber, String date) throws SQLException {
+        List<Info> infoList = new ArrayList<>();
+        ResultSet resultSet = null;
+
+        if (date.isEmpty()) {
+            String query = "SELECT * FROM info WHERE cabinet = '" + keyNumber + "';";
+            resultSet = statement.executeQuery(query);
+        } else {
+            String query = "SELECT * FROM info WHERE cabinet = '" + keyNumber + "' AND dateTake = '" + date + "';";
+            resultSet = statement.executeQuery(query);
+        }
+
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String personName = resultSet.getString("personName");
+            String personUid = resultSet.getString("personUid");
+            String cabinet = resultSet.getString("cabinet");
+            String cabinetUid = resultSet.getString("cabinetUid");
+            String dateTake = resultSet.getString("dateTake");
+            String timeTake = resultSet.getString("timeTake");
+            String timeReturn = resultSet.getString("timeReturn");
+
+            Info info = new Info(personName, personUid, cabinet, cabinetUid, dateTake, timeTake, timeReturn);
+            info.setId(id);
+
+            infoList.add(info);
+        }
+
+        return infoList;
     }
 
     public Info getInfoByKeyUidAndDate(String uid, String date) throws SQLException {
@@ -118,22 +156,47 @@ public class InfoRepository {
             String timeTake = resultSet.getString("timeTake");
             String timeReturn = resultSet.getString("timeReturn");
 
-            if(timeReturn.equals("no time")) {
-                Info info = new Info(personName, personUid, cabinet, cabinetUid, dateTake, timeTake, timeReturn);
-                info.setId(id);
+            Info info = new Info(personName, personUid, cabinet, cabinetUid, dateTake, timeTake, timeReturn);
+            info.setId(id);
 
-                System.out.println(info.getPersonUid());
+            System.out.println(info.getPersonUid());
 
-                infoList.add(info);
-            }
+            infoList.add(info);
 
         }
 
         return infoList;
     }
 
-    public ArrayList<Info> getInfoByDate(String today) throws SQLException {
-        ArrayList<Info> infoArrayList = new ArrayList<>();
+
+    public List<Info> getAllInfo() throws SQLException {
+        List<Info> infoList = new ArrayList<>();
+
+        statement = connection.createStatement();
+        String query = ("SELECT * FROM info;");
+        ResultSet resultSet = statement.executeQuery(query);
+
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String personName = resultSet.getString("personName");
+            String personUid = resultSet.getString("personUid");
+            String cabinet = resultSet.getString("cabinet");
+            String cabinetUid = resultSet.getString("cabinetUid");
+            String dateTake = resultSet.getString("dateTake");
+            String timeTake = resultSet.getString("timeTake");
+            String timeReturn = resultSet.getString("timeReturn");
+
+            Info info = new Info(personName, personUid, cabinet, cabinetUid, dateTake, timeTake, timeReturn);
+            info.setId(id);
+
+            infoList.add(info);
+        }
+
+        return infoList;
+    }
+
+    public List<Info> getInfoByDate(String today) throws SQLException {
+        List<Info> infoArrayList = new ArrayList<>();
 
         statement = connection.createStatement();
         String query = ("SELECT id, personName, personUid, cabinet, cabinetUid, " +

@@ -22,9 +22,25 @@ public class InfoViewModel {
         }
     }
 
+    public void deleteInfo(int id) {
+        try {
+            infoRepository.deleteInfo(id);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public Info getInfoByPersonUid(String uid, String date) {
         try {
             return infoRepository.getInfoByPersonUidAndDate(uid, date);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Info> getListByKeyNumber(String  keyNumber, String date) {
+        try {
+            return infoRepository.getListByKeyNumber(keyNumber, date);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -38,7 +54,7 @@ public class InfoViewModel {
         }
     }
 
-    public List<Info> getTransferList(String uid, String date) {
+    public List<Info> getListInfoByUserUid(String uid, String date) {
         try {
             return infoRepository.getListInfoByPersonUidAndDate(uid, date);
         } catch (SQLException e) {
@@ -54,8 +70,14 @@ public class InfoViewModel {
         }
     }
 
-
-    public ArrayList<Info> getInfoByDate(String today) {
+    public List<Info> getAllInfo() {
+        try {
+            return infoRepository.getAllInfo();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public List<Info> getInfoByDate(String today) {
         try {
             return infoRepository.getInfoByDate(today);
         } catch (SQLException e) {
