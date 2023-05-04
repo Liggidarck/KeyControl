@@ -25,6 +25,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+import static com.george.keyControll.utils.TimeUtils.getDate;
+import static com.george.keyControll.utils.TimeUtils.getTime;
+
 public class MainView {
     public JPanel mainPanel;
     private JTable infoTable;
@@ -36,7 +39,7 @@ public class MainView {
             cabinetInfoTextField, dateInfoTextField, timeTakeInfoTextField, timeReturnInfoTextField,
             textFieldIdUser, filterUserUidTextField, filterKeyTextField;
     private JButton searchKeyByNameButton;
-    private final TimeUtils timeUtils = new TimeUtils();
+    private JButton transferButton;
     private final TextValidator textValidator = new TextValidator();
     private final InfoViewModel infoViewModel = new InfoViewModel();
     private final KeyViewModel keyViewModel = new KeyViewModel();
@@ -48,7 +51,7 @@ public class MainView {
     private int infoId;
 
     public MainView() {
-        currentDateLabel.setText("Сегодня " + timeUtils.getDate());
+        currentDateLabel.setText("Сегодня " + getDate());
         scanLabel.setText("ИНИЦИАЛИЗАЦИЯ... ПОЖАЛУЙСТА, ПОДОЖДИТЕ");
 
         Thread scannerThread = new Thread(() -> {
@@ -79,9 +82,9 @@ public class MainView {
         });
         scannerThread.start();
 
-        dateTextField.setText(timeUtils.getDate());
+        dateTextField.setText(getDate());
 
-        arrayListInfo = infoViewModel.getInfoByDate(timeUtils.getDate());
+        arrayListInfo = infoViewModel.getInfoByDate(getDate());
         tableModel = new InfoTableModel(arrayListInfo);
         infoTable.setModel(tableModel);
 
@@ -112,12 +115,29 @@ public class MainView {
                     timeTakeInfoTextField.getText(),
                     timeReturnInfoTextField.getText());
             infoViewModel.updateInfo(updateInfo, infoId);
-            updateTable(timeUtils.getDate());
+            updateTable(getDate());
+        });
+
+        transferButton.addActionListener(e -> {
+            Info currentInfo = infoViewModel.getInfoById(infoId);
+            currentInfo.setTimeReturn(getTime());
+            infoViewModel.updateInfo(currentInfo, infoId);
+
+            Info newInfo = new Info(nameInfoTextField.getText(),
+                    uidPersonInfoTextField.getText(),
+                    cabinetInfoTextField.getText(),
+                    uidKeyInfoTextField.getText(),
+                    dateInfoTextField.getText(),
+                    timeTakeInfoTextField.getText(),
+                    "no time");
+            infoViewModel.createInfo(newInfo);
+
+            updateTable(getDate());
         });
 
         deleteInfoButton.addActionListener(e -> {
             infoViewModel.deleteInfo(infoId);
-            updateTable(timeUtils.getDate());
+            updateTable(getDate());
         });
 
         confirmDateButton.addActionListener(e -> {
@@ -161,7 +181,7 @@ public class MainView {
             updateTable(infoList);
         });
 
-        showCurrentDateInfoButton.addActionListener(e -> updateTable(timeUtils.getDate()));
+        showCurrentDateInfoButton.addActionListener(e -> updateTable(getDate()));
         showAllInfoButton.addActionListener(e -> {
             List<Info> infoList = infoViewModel.getAllInfo();
             updateTable(infoList);
@@ -338,8 +358,8 @@ public class MainView {
             return;
         }
 
-        Info infoByCard = infoViewModel.getInfoByPersonUid(cardUid, timeUtils.getDate());
-        Info infoByKey = infoViewModel.getInfoByKeyUidAndDate(keyUid, timeUtils.getDate());
+        Info infoByCard = infoViewModel.getInfoByPersonUid(cardUid, getDate());
+        Info infoByKey = infoViewModel.getInfoByKeyUidAndDate(keyUid, getDate());
 
         // Запись в таблице по карте существует?
         if (infoByCard == null) {
@@ -368,7 +388,7 @@ public class MainView {
                         infoByKey.getCabinetUid(),
                         infoByKey.getDateTake(),
                         infoByKey.getTimeTake(),
-                        timeUtils.getTime()), id
+                        getTime()), id
                 );
 
                 Key updateAvailable = new Key(key.getUid(), key.getNumber(), "true");
@@ -377,7 +397,7 @@ public class MainView {
                 personNameLabel.setText("Пользователь: " + person.getName());
                 cabinetLabel.setText("Кабинет: " + key.getNumber() + " СДАН НА ПОСТ ОХРАНЫ.");
 
-                updateTable(timeUtils.getDate());
+                updateTable(getDate());
 
                 return;
             }
@@ -390,8 +410,8 @@ public class MainView {
 
     private void createInfo(Person person, Key key) {
         Info newInfo = new Info(person.getName(), person.getUid(),
-                key.getNumber(), key.getUid(), timeUtils.getDate(),
-                timeUtils.getTime(), "no time");
+                key.getNumber(), key.getUid(), getDate(),
+                getTime(), "no time");
         infoViewModel.createInfo(newInfo);
 
         Key updateAvailable = new Key(key.getUid(), key.getNumber(), "false");
@@ -400,7 +420,7 @@ public class MainView {
         personNameLabel.setText("Пользователь: " + person.getName());
         cabinetLabel.setText("Кабинет: " + key.getNumber());
 
-        updateTable(timeUtils.getDate());
+        updateTable(getDate());
     }
 
     private boolean validateField(String date) {
@@ -408,7 +428,7 @@ public class MainView {
     }
 
     public void updateTable(String currentDay) {
-        currentDateLabel.setText("Сегодня " + timeUtils.getDate());
+        currentDateLabel.setText("Сегодня " + getDate());
         arrayListInfo.clear();
         arrayListInfo = infoViewModel.getInfoByDate(currentDay);
         tableModel = new InfoTableModel(arrayListInfo);
@@ -416,7 +436,7 @@ public class MainView {
     }
 
     public void updateTable(List<Info> infoList) {
-        currentDateLabel.setText("Сегодня " + timeUtils.getDate());
+        currentDateLabel.setText("Сегодня " + getDate());
         arrayListInfo.clear();
         arrayListInfo = infoList;
         tableModel = new InfoTableModel(arrayListInfo);

@@ -5,7 +5,7 @@ import java.time.LocalTime;
 
 public class TimeUtils {
 
-    public String getDate() {
+    public static String getDate() {
         int dayOfMoth = LocalDate.now().getDayOfMonth();
         int moth = LocalDate.now().getMonthValue();
         int year = LocalDate.now().getYear();
@@ -23,7 +23,7 @@ public class TimeUtils {
         return dayMoth + "." + mothStr + "." + year;
     }
 
-    public String getTime() {
+    public static String getTime() {
         return LocalTime.now().getHour() + ":" + LocalTime.now().getMinute();
     }
 

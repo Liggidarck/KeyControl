@@ -46,6 +46,16 @@ public class InfoViewModel {
         }
     }
 
+    public Info getInfoById(int id) {
+
+        try {
+            return infoRepository.getInfoById(id);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
     public Info getInfoByKeyUidAndDate(String uid, String date) {
         try {
             return infoRepository.getInfoByKeyUidAndDate(uid, date);

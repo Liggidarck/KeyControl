@@ -58,10 +58,10 @@ public class InfoRepository {
     public Info getInfoByPersonUidAndDate(String uid, String date) throws SQLException {
         Info info = null;
 
-        statement = connection.createStatement();
         String query = ("SELECT id, personName, personUid, cabinet, cabinetUid, dateTake, " +
                 "timeTake, timeReturn FROM info WHERE personUid = '" + uid + "' AND dateTake = '" + date + "' ;");
 
+        statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(query);
 
         while (resultSet.next()) {
@@ -81,17 +81,40 @@ public class InfoRepository {
         return info;
     }
 
+    public Info getInfoById(int id) throws SQLException {
+        Info info = null;
+        String query = "SELECT * FROM info WHERE id = " + id;
+
+        statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query);
+
+        while (resultSet.next()) {
+            String personName = resultSet.getString("personName");
+            String personUid = resultSet.getString("personUid");
+            String cabinet = resultSet.getString("cabinet");
+            String cabinetUid = resultSet.getString("cabinetUid");
+            String dateTake = resultSet.getString("dateTake");
+            String timeTake = resultSet.getString("timeTake");
+            String timeReturn = resultSet.getString("timeReturn");
+
+            info = new Info(personName, personUid, cabinet, cabinetUid, dateTake, timeTake, timeReturn);
+            info.setId(id);
+        }
+
+        return info;
+    }
+
     public List<Info> getListByKeyNumber(String keyNumber, String date) throws SQLException {
         List<Info> infoList = new ArrayList<>();
-        ResultSet resultSet = null;
+        ResultSet resultSet;
 
+        String query;
         if (date.isEmpty()) {
-            String query = "SELECT * FROM info WHERE cabinet = '" + keyNumber + "';";
-            resultSet = statement.executeQuery(query);
+            query = "SELECT * FROM info WHERE cabinet = '" + keyNumber + "';";
         } else {
-            String query = "SELECT * FROM info WHERE cabinet = '" + keyNumber + "' AND dateTake = '" + date + "';";
-            resultSet = statement.executeQuery(query);
+            query = "SELECT * FROM info WHERE cabinet = '" + keyNumber + "' AND dateTake = '" + date + "';";
         }
+        resultSet = statement.executeQuery(query);
 
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
